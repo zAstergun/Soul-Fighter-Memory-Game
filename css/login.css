@@ -26,6 +26,9 @@
      1px -1px 0 black,  
     -1px  1px 0 black,  
      1px  1px 0 black;
+    background: rgba(31, 30, 30, 0.5);
+    display: inline;
+    padding: 7px;
 }
 
 .login__input {
