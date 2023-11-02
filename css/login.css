@@ -21,6 +21,11 @@
 .login__header h1 {
     color: orangered;
     font-size: 1.5em;
+    text-shadow: 
+    -1px -1px 0 black,  
+     1px -1px 0 black,  
+    -1px  1px 0 black,  
+     1px  1px 0 black;
 }
 
 .login__input {
