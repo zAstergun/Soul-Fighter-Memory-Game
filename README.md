@@ -25,4 +25,4 @@ Jogo feito com base na temática Soul Fighter do universo de League of Legends. 
 
 ## 🧐 Comentários relevantes?
 
-Pretendo atualizar esse projeto aos poucos colocando novas funcionalidades somente por entretenimento.
+Vou renovar ele inteiro esse ano.
