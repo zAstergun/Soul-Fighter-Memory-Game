@@ -97,7 +97,7 @@ export async function saveScoreToDb(params: {
 }): Promise<SupabaseLeaderboardEntry | null> {
   try {
     const payload = {
-      player_name: params.playerName,
+      player_name: params.playerName?.trim() || "Guerreiro",
       user_id: params.userId || null,
       difficulty: params.difficulty,
       score: params.score,
@@ -109,24 +109,7 @@ export async function saveScoreToDb(params: {
     const { data, error } = await supabase
       .from("soulfighter_ranking")
       .insert(payload)
-      .select(`
-        id,
-        player_name,
-        user_id,
-        difficulty,
-        score,
-        time_ms,
-        moves,
-        rank,
-        created_at,
-        profiles (
-          id,
-          full_name,
-          channel,
-          avatar_url,
-          is_vip
-        )
-      `)
+      .select()
       .single();
 
     if (error) {
