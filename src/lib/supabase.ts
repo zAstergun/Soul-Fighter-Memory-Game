@@ -96,21 +96,15 @@ export async function saveScoreToDb(params: {
   rank: string;
 }): Promise<SupabaseLeaderboardEntry | null> {
   try {
-    const payload = {
-      player_name: params.playerName?.trim() || "Guerreiro",
-      user_id: params.userId || null,
-      difficulty: params.difficulty,
-      score: params.score,
-      time_ms: params.timeMs,
-      moves: params.moves,
-      rank: params.rank,
-    };
-
-    const { data, error } = await supabase
-      .from("soulfighter_ranking")
-      .insert(payload)
-      .select()
-      .single();
+    const { data, error } = await supabase.rpc("upsert_soulfighter_score", {
+      p_player_name: params.playerName?.trim() || "Guerreiro",
+      p_user_id: params.userId || null,
+      p_difficulty: params.difficulty,
+      p_score: params.score,
+      p_time_ms: params.timeMs,
+      p_moves: params.moves,
+      p_rank: params.rank,
+    });
 
     if (error) {
       console.warn("Erro ao salvar pontuação no Supabase:", error);
