@@ -41,7 +41,7 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center px-4 pt-8 pb-6 sm:pt-12">
+    <div className="h-dvh max-h-dvh w-full overflow-hidden flex flex-col items-center justify-between px-3 py-1.5 sm:px-4 sm:py-3.5 select-none touch-manipulation">
       {/* Auth Modal */}
       <AuthModal
         isOpen={authModalOpen}
@@ -52,20 +52,20 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
       />
 
       {/* Top Bar / Status da Conta */}
-      <div className="mb-4 flex w-full max-w-xl items-center justify-between gap-2 px-2 text-xs">
-        <div className="flex items-center gap-2">
-          <span className="font-display text-sm tracking-wider text-soul-gold">
+      <div className="flex w-full max-w-3xl md:max-w-4xl shrink-0 items-center justify-between gap-2 px-1 text-xs">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <span className="font-display text-xs sm:text-sm tracking-wider text-soul-gold">
             REDE ASTER
           </span>
           <span className="h-1 w-1 rounded-full bg-white/40" />
-          <span className="text-white/60">Soul Fighter Arena</span>
+          <span className="text-[10px] text-white/60 sm:text-xs">Soul Fighter Arena</span>
         </div>
 
         {user && profile ? (
-          <div className="flex items-center gap-2 rounded-full border border-soul-gold/30 bg-black/50 py-1 pl-1.5 pr-2.5 backdrop-blur-sm">
+          <div className="flex items-center gap-1.5 rounded-full border border-soul-gold/30 bg-black/50 py-0.5 pl-1 pr-2 backdrop-blur-sm sm:py-1 sm:pl-1.5 sm:pr-2.5">
             <PlayerAvatar profile={profile} name={profile.full_name || "Guerreiro"} size="sm" />
             <div className="flex items-center gap-1">
-              <span className="max-w-[100px] truncate font-bold text-white sm:max-w-[140px]">
+              <span className="max-w-[90px] truncate text-[11px] font-bold text-white sm:max-w-[140px] sm:text-xs">
                 {profile.full_name || profile.channel}
               </span>
               <VerifiedBadge className="h-3 w-3" />
@@ -88,7 +88,7 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
               sfx.click();
               setAuthModalOpen(true);
             }}
-            className="flex items-center gap-1.5 rounded-full border border-soul-cyan/40 bg-soul-cyan/10 px-3 py-1 font-bold text-soul-cyan transition hover:bg-soul-cyan/20 active:scale-95"
+            className="flex items-center gap-1 rounded-full border border-soul-cyan/40 bg-soul-cyan/10 px-2.5 py-0.5 text-[11px] font-bold text-soul-cyan transition hover:bg-soul-cyan/20 active:scale-95 sm:px-3 sm:py-1 sm:text-xs"
           >
             <VerifiedBadge className="h-3 w-3" />
             <span>Entrar com Aster Account</span>
@@ -97,8 +97,8 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
       </div>
 
       {/* Logo */}
-      <header className="animate-slam relative mb-6 text-center select-none">
-        <div className="font-display text-6xl leading-[0.85] tracking-wide [filter:drop-shadow(4px_4px_0_#120725)_drop-shadow(0_0_24px_rgba(255,61,154,0.6))] sm:text-8xl">
+      <header className="animate-slam relative shrink-0 my-0.5 text-center select-none sm:my-1">
+        <div className="font-display text-3xl leading-[0.85] tracking-wide [filter:drop-shadow(3px_3px_0_#120725)_drop-shadow(0_0_18px_rgba(255,61,154,0.5))] sm:text-5xl md:text-6xl">
           <span className="bg-gradient-to-b from-soul-gold via-soul-orange to-soul-pink bg-clip-text text-transparent [-webkit-text-stroke:0]">
             SOUL
           </span>{" "}
@@ -106,38 +106,68 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
             FIGHTER
           </span>
         </div>
-        <div className="mt-2 flex items-center justify-center gap-2">
-          <span className="clip-slant bg-soul-pink px-4 py-1 font-display text-xl tracking-widest text-white sm:text-2xl">
+        <div className="mt-1 flex items-center justify-center gap-1.5 sm:mt-1.5 sm:gap-2">
+          <span className="clip-slant bg-soul-pink px-2.5 py-0.5 font-display text-xs tracking-widest text-white sm:px-4 sm:py-1 sm:text-lg">
             MEMORY GAME
           </span>
-          <span className="clip-slant-r bg-soul-gold px-3 py-1 font-display text-lg tracking-widest text-soul-ink sm:text-xl">
+          <span className="clip-slant-r bg-soul-gold px-2 py-0.5 font-display text-[11px] tracking-widest text-soul-ink sm:px-3 sm:py-1 sm:text-base">
             REMASTERED
           </span>
         </div>
       </header>
 
-      {/* Roster */}
-      <div className="mb-6 flex max-w-full gap-1.5 overflow-hidden px-2 sm:gap-2">
+      {/* Roster Strip: MOBILE MARQUEE (< md) com loop infinito contínuo */}
+      <div className="shrink-0 my-0.5 sm:my-1 w-full max-w-full overflow-hidden py-3 -my-2 md:hidden">
+        <div className="flex w-max gap-2 animate-sf-marquee px-1 pointer-events-none select-none">
+          {[...BASE_FIGHTERS, ...BASE_FIGHTERS].map((f, i) => (
+            <div
+              key={`${f.id}-${i}`}
+              className="group relative h-18 w-13 min-[480px]:h-22 min-[480px]:w-16 shrink-0 -skew-x-6 overflow-hidden rounded-lg border-2 shadow-xl"
+              style={{ borderColor: f.color }}
+              title={f.name}
+            >
+              <img
+                src={loadingArt(f)}
+                alt={f.name}
+                className="h-full w-full scale-125 object-cover object-top transition duration-300 group-hover:scale-150"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent p-0.5 text-center">
+                <span className="font-display block text-[8px] min-[480px]:text-[9px] truncate" style={{ color: f.color }}>
+                  {f.name}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Roster Strip: DESKTOP (>= md) quebra a caixa para mostrar todos os 10 sem cortar e sem marquee */}
+      <div className="shrink-0 my-1 hidden md:flex w-full max-w-5xl lg:max-w-6xl items-center justify-center gap-2 lg:gap-3 py-4 -my-2 px-2 overflow-visible">
         {BASE_FIGHTERS.map((f, i) => (
           <div
             key={f.id}
-            className="animate-deal group relative h-20 w-12 shrink-0 -skew-x-6 overflow-hidden rounded-md border-2 border-white/20 sm:h-28 sm:w-16"
-            style={{ animationDelay: `${i * 60}ms`, borderColor: f.color + "aa" }}
+            className="animate-deal group relative md:h-28 md:w-20 lg:h-32 lg:w-23 shrink-0 -skew-x-6 overflow-hidden rounded-xl border-2 transition duration-300 hover:scale-120 hover:z-30 hover:rotate-0 shadow-xl cursor-pointer"
+            style={{ animationDelay: `${i * 35}ms`, borderColor: f.color }}
             title={f.name}
           >
             <img
               src={loadingArt(f)}
               alt={f.name}
-              className="h-full w-full scale-125 object-cover object-top transition group-hover:scale-150"
+              className="h-full w-full scale-125 object-cover object-top transition duration-300 group-hover:scale-150"
             />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent p-1 text-center">
+              <span className="font-display block text-[10px] lg:text-xs truncate" style={{ color: f.color }}>
+                {f.name}
+              </span>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Painel Principal */}
-      <div className="w-full max-w-xl rounded-3xl border border-white/15 bg-soul-ink/80 p-5 shadow-[0_20px_80px_-20px_rgba(255,61,154,0.5)] backdrop-blur-md sm:p-7">
+      {/* Painel Principal com Altura Adaptável (Nunca corta o botão e não pula entre abas) */}
+      <div className="w-full max-w-3xl md:max-w-4xl flex-1 min-h-0 max-h-[380px] sm:max-h-[430px] md:max-h-[450px] flex flex-col justify-between rounded-2xl border border-white/15 bg-soul-ink/90 p-2.5 sm:p-4 shadow-[0_20px_60px_-15px_rgba(255,61,154,0.4)] backdrop-blur-md">
         {/* Abas Superiores do Painel */}
-        <div className="mb-5 grid grid-cols-3 gap-1 rounded-full bg-black/40 p-1">
+        <div className="mb-2 grid grid-cols-3 gap-1 shrink-0 rounded-full bg-black/40 p-1 sm:mb-2.5">
           {(
             [
               ["play", "Jogar"],
@@ -151,7 +181,7 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                 sfx.click();
                 setPanel(id);
               }}
-              className={`rounded-full py-2 text-sm font-bold transition ${
+              className={`rounded-full py-1 text-xs font-bold transition sm:py-1.5 sm:text-sm ${
                 panel === id
                   ? "bg-gradient-to-r from-soul-pink to-soul-violet text-white shadow"
                   : "text-white/60 hover:text-white"
@@ -162,199 +192,200 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
           ))}
         </div>
 
-        {panel === "play" && (
-          <form onSubmit={submit} className="space-y-5">
-            {/* Seletor de Modo: Convidado vs Aster Account */}
-            <div className="rounded-2xl border border-white/10 bg-black/40 p-2.5">
-              <span className="mb-2 block text-[11px] font-bold tracking-wider text-white/50 uppercase">
-                Identidade na Arena
-              </span>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    sfx.click();
-                    setMode("guest");
-                  }}
-                  className={`flex flex-col items-start rounded-xl border p-2.5 text-left transition ${
-                    mode === "guest" && !user
-                      ? "border-soul-gold/80 bg-soul-gold/10 text-white"
-                      : "border-white/10 bg-white/5 text-white/60 hover:bg-white/10"
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5 font-bold text-xs uppercase">
-                    <span>👤</span> Convidado
-                  </div>
-                  <span className="mt-1 text-[11px] text-white/50 leading-tight">
-                    Apenas digite um nome. Sem avatar no ranking.
-                  </span>
-                </button>
+        {/* Conteúdo do Painel */}
+        <div className="flex-1 min-h-0 flex flex-col justify-between overflow-hidden pr-0.5">
+          {panel === "play" && (
+            <form onSubmit={submit} className="h-full flex-1 min-h-0 flex flex-col justify-between gap-1.5 sm:gap-2.5 overflow-hidden">
+              {/* Área interna com rolagem garantida para telas curtas */}
+              <div className="flex-1 min-h-0 overflow-y-auto md:overflow-y-visible no-scrollbar pr-0.5 md:pr-0 space-y-2">
+                <div className="grid grid-cols-1 min-[480px]:grid-cols-2 gap-2 sm:gap-3 items-stretch">
+                  {/* LADO ESQUERDO: Identidade na Arena + Nome do Lutador */}
+                  <div className="flex flex-col justify-between gap-1.5">
+                    {/* Seletor de Modo: Convidado vs Aster Account */}
+                    <div className="rounded-xl border border-white/10 bg-black/40 p-1.5 sm:p-2.5">
+                      <span className="mb-1 block text-[10px] font-bold tracking-wider text-white/50 uppercase sm:text-[11px]">
+                        Identidade na Arena
+                      </span>
+                      <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            sfx.click();
+                            setMode("guest");
+                          }}
+                          className={`flex flex-col items-start rounded-lg border p-1.5 text-left transition sm:rounded-xl ${
+                            mode === "guest" && !user
+                              ? "border-soul-gold/80 bg-soul-gold/15 text-white shadow-[0_0_12px_rgba(255,210,63,0.2)]"
+                              : "border-white/10 bg-white/5 text-white/60 hover:bg-white/10"
+                          }`}
+                        >
+                          <div className="flex items-center gap-1 font-bold text-[11px] sm:text-xs uppercase">
+                            <span>👤</span> Convidado
+                          </div>
+                          <span className="mt-0.5 text-[9px] sm:text-[10px] text-white/50 leading-tight">
+                            Nome livre. Sem foto.
+                          </span>
+                        </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    sfx.click();
-                    if (!user) {
-                      setAuthModalOpen(true);
-                    } else {
-                      setMode("account");
-                    }
-                  }}
-                  className={`flex flex-col items-start rounded-xl border p-2.5 text-left transition ${
-                    user || mode === "account"
-                      ? "border-soul-cyan/80 bg-soul-cyan/10 text-white shadow-[0_0_15px_rgba(62,224,255,0.15)]"
-                      : "border-white/10 bg-white/5 text-white/60 hover:bg-white/10"
-                  }`}
-                >
-                  <div className="flex items-center gap-1 font-bold text-xs uppercase text-soul-cyan">
-                    <span>✨</span> Aster Account
-                    <VerifiedBadge className="h-3 w-3" />
-                  </div>
-                  <span className="mt-1 text-[11px] text-white/50 leading-tight">
-                    {user && profile
-                      ? "Conectado! Verificado & VIP ativos."
-                      : "Clique para entrar ou criar sua conta."}
-                  </span>
-                </button>
-              </div>
-
-              {/* Banner Informativo / Troca de Conta quando logado */}
-              {user && profile ? (
-                <div className="mt-3 flex items-center justify-between rounded-xl bg-soul-cyan/10 border border-soul-cyan/20 px-3 py-2 text-xs">
-                  <div className="flex items-center gap-2">
-                    <PlayerAvatar profile={profile} name={profile.full_name || ""} size="sm" />
-                    <div>
-                      <div className="flex items-center gap-1 font-bold text-white">
-                        <span>{profile.full_name || profile.channel}</span>
-                        <VerifiedBadge className="h-3.5 w-3.5" />
-                        {profile.is_vip && <VipBadge className="text-[9px] px-1 py-0" />}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            sfx.click();
+                            if (!user) {
+                              setAuthModalOpen(true);
+                            } else {
+                              setMode("account");
+                            }
+                          }}
+                          className={`flex flex-col items-start rounded-lg border p-1.5 text-left transition sm:rounded-xl ${
+                            user || mode === "account"
+                              ? "border-soul-cyan/80 bg-soul-cyan/15 text-white shadow-[0_0_12px_rgba(62,224,255,0.2)]"
+                              : "border-white/10 bg-white/5 text-white/60 hover:bg-white/10"
+                          }`}
+                        >
+                          <div className="flex items-center gap-1 font-bold text-[11px] sm:text-xs uppercase text-soul-cyan">
+                            <span>✨</span> Aster Account
+                            <VerifiedBadge className="h-3 w-3" />
+                          </div>
+                          <span className="mt-0.5 text-[9px] sm:text-[10px] text-white/50 leading-tight">
+                            {user && profile ? "VIP & Verificado!" : "Entrar / cadastrar"}
+                          </span>
+                        </button>
                       </div>
-                      <span className="text-[10px] text-white/50">
-                        {profile.channel || "Membro da Rede ASTER"}
+
+                      {/* Banner da Conta se logado */}
+                      {user && profile ? (
+                        <div className="mt-1.5 flex items-center justify-between rounded-lg bg-soul-cyan/10 border border-soul-cyan/25 px-2 py-1 text-xs">
+                          <div className="flex items-center gap-1.5">
+                            <PlayerAvatar profile={profile} name={profile.full_name || ""} size="sm" />
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1 font-bold text-white text-[11px] sm:text-xs">
+                                <span className="truncate">{profile.full_name || profile.channel}</span>
+                                <VerifiedBadge className="h-3 w-3 shrink-0" />
+                                {profile.is_vip && <VipBadge className="text-[9px] px-1 py-0 shrink-0" />}
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              sfx.click();
+                              signOut();
+                            }}
+                            className="text-[10px] font-bold text-soul-pink hover:underline shrink-0 ml-1"
+                          >
+                            Trocar
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="mt-1.5 flex items-center gap-1 rounded-lg bg-white/5 border border-white/5 px-2 py-0.5 text-[9.5px] sm:text-[10px] text-white/50">
+                          <span className="text-soul-gold text-xs">💡</span>
+                          <span>Entre com Aster Account para selos e ranking global.</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Input do Nome do Lutador */}
+                    <label className="block">
+                      <span className="mb-0.5 block text-[10px] font-bold tracking-widest text-white/60 uppercase sm:text-xs">
+                        Nome do lutador
                       </span>
+                      <input
+                        value={name}
+                        onChange={(e) => setName(e.target.value.slice(0, 16))}
+                        placeholder="Digite seu nome..."
+                        className="w-full rounded-xl border border-white/15 bg-black/40 px-3 py-1.5 text-sm font-semibold text-white placeholder-white/30 outline-none transition focus:border-soul-gold sm:py-2 sm:text-base"
+                      />
+                    </label>
+                  </div>
+
+                  {/* LADO DIREITO: Dificuldades */}
+                  <div className="flex flex-col justify-between">
+                    <span className="mb-0.5 block text-[10px] font-bold tracking-widest text-white/60 uppercase sm:text-xs">
+                      Dificuldade da Luta
+                    </span>
+                    <div className="flex flex-col gap-1 sm:gap-1.5 flex-1 justify-between">
+                      {DIFFICULTIES.map((d) => (
+                        <button
+                          type="button"
+                          key={d.id}
+                          onClick={() => {
+                            sfx.click();
+                            setDiff(d.id);
+                          }}
+                          className={`relative overflow-hidden rounded-lg sm:rounded-xl border px-2.5 py-1.5 text-left transition flex items-center justify-between ${
+                            diff === d.id
+                              ? "border-soul-gold bg-soul-gold/15 shadow-[0_0_12px_rgba(255,210,63,0.25)] ring-1 ring-soul-gold/70"
+                              : "border-white/10 bg-black/30 hover:border-white/30 hover:bg-white/5"
+                          }`}
+                        >
+                          <div className={`absolute inset-y-0 left-0 w-1 sm:w-1.5 bg-gradient-to-b ${d.accent}`} />
+                          <div className="pl-1 min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-display text-sm tracking-wide sm:text-base">{d.label}</span>
+                              <span className="text-[9px] font-bold tracking-wide text-soul-gold uppercase sm:text-[10px]">
+                                {d.tag}
+                              </span>
+                            </div>
+                            <p className="text-[9.5px] sm:text-[10px] leading-tight text-white/60 truncate">
+                              {d.description}
+                            </p>
+                          </div>
+                          <div className="ml-1.5 flex shrink-0 items-center">
+                            <span
+                              className={`h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full border transition ${
+                                diff === d.id
+                                  ? "bg-soul-gold border-soul-gold shadow-[0_0_8px_#ffd23f]"
+                                  : "border-white/30"
+                              }`}
+                            />
+                          </div>
+                        </button>
+                      ))}
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      sfx.click();
-                      signOut();
-                    }}
-                    className="text-[11px] font-bold text-soul-pink hover:underline"
-                  >
-                    Trocar Conta
-                  </button>
                 </div>
-              ) : (
-                <div className="mt-3 flex items-center justify-between rounded-xl bg-white/5 px-3 py-2 text-xs">
-                  <span className="text-[11px] text-white/60">
-                    💡 Jogar com uma Aster Account ativa o selo de Verificado e foto de perfil no ranking!
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      sfx.click();
-                      setAuthModalOpen(true);
-                    }}
-                    className="shrink-0 ml-2 font-bold text-soul-gold hover:underline text-[11px]"
-                  >
-                    Conectar Agora
-                  </button>
-                </div>
-              )}
-            </div>
+              </div>
 
-            {/* Input do Nome do Lutador */}
-            <label className="block">
-              <div className="mb-1.5 flex items-center justify-between">
-                <span className="text-xs font-bold tracking-widest text-white/60 uppercase">
-                  Nome do lutador na arena
-                </span>
-                {user && profile && (
-                  <span className="text-[10px] text-soul-cyan font-semibold">
-                    (Vinculado à sua Aster Account)
-                  </span>
+              {/* Botão de Iniciar Jogo (SEMPRE VISÍVEL no rodapé) */}
+              <button
+                type="submit"
+                disabled={!valid}
+                className="shrink-0 font-display group relative mt-1 w-full overflow-hidden rounded-xl bg-gradient-to-r from-soul-orange via-soul-pink to-soul-violet py-2 text-xl sm:py-2.5 sm:text-2xl tracking-widest text-white shadow-lg transition enabled:hover:scale-[1.01] enabled:active:scale-95 disabled:cursor-not-allowed disabled:from-zinc-600 disabled:via-zinc-600 disabled:to-zinc-700 disabled:text-white/40"
+              >
+                <span className="relative z-10">{valid ? "LUTAR!" : "DIGITE SEU NOME"}</span>
+                {valid && (
+                  <span className="absolute inset-y-0 left-0 w-1/3 bg-white/30 opacity-0 blur-md group-hover:animate-shine group-hover:opacity-100" />
                 )}
-              </div>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value.slice(0, 16))}
-                placeholder="Digite seu nome de luta..."
-                autoFocus
-                className="w-full rounded-xl border-2 border-white/15 bg-black/40 px-4 py-3 text-lg font-semibold text-white placeholder-white/30 outline-none transition focus:border-soul-gold"
-              />
-            </label>
+              </button>
+            </form>
+          )}
 
-            {/* Dificuldades */}
-            <div>
-              <span className="mb-1.5 block text-xs font-bold tracking-widest text-white/60 uppercase">
-                Dificuldade
-              </span>
-              <div className="grid grid-cols-2 gap-2">
-                {DIFFICULTIES.map((d) => (
-                  <button
-                    type="button"
-                    key={d.id}
-                    onClick={() => {
-                      sfx.click();
-                      setDiff(d.id);
-                    }}
-                    className={`relative overflow-hidden rounded-xl border-2 p-3 text-left transition ${
-                      diff === d.id
-                        ? "border-soul-gold bg-white/10"
-                        : "border-white/10 bg-black/30 hover:border-white/30"
-                    }`}
-                  >
-                    <div className={`absolute inset-y-0 left-0 w-1.5 bg-gradient-to-b ${d.accent}`} />
-                    <div className="flex items-baseline justify-between gap-2 pl-1">
-                      <span className="font-display text-2xl tracking-wide">{d.label}</span>
-                      <span className="text-[10px] font-bold tracking-wide text-white/50 uppercase">
-                        {d.tag}
-                      </span>
-                    </div>
-                    <p className="mt-0.5 pl-1 text-xs leading-snug text-white/60">{d.description}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
+          {panel === "rank" && <Leaderboard initial={diff} />}
 
-            {/* Botão de Iniciar Jogo */}
-            <button
-              type="submit"
-              disabled={!valid}
-              className="font-display group relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-soul-orange via-soul-pink to-soul-violet py-4 text-3xl tracking-widest text-white shadow-lg transition enabled:hover:scale-[1.02] enabled:active:scale-95 disabled:cursor-not-allowed disabled:from-zinc-600 disabled:via-zinc-600 disabled:to-zinc-700 disabled:text-white/40"
-            >
-              <span className="relative z-10">{valid ? "LUTAR!" : "DIGITE SEU NOME"}</span>
-              {valid && (
-                <span className="absolute inset-y-0 left-0 w-1/3 bg-white/30 opacity-0 blur-md group-hover:animate-shine group-hover:opacity-100" />
-              )}
-            </button>
-          </form>
-        )}
-
-        {panel === "rank" && <Leaderboard initial={diff} />}
-
-        {panel === "help" && (
-          <ul className="space-y-3 text-sm text-white/80">
-            {[
-              ["🃏", "Vire duas cartas por vez. Se forem o mesmo lutador, o par é seu."],
-              ["🔥", "Acertos seguidos geram COMBO e multiplicam seus pontos."],
-              ["💥", "Cada par encontrado tira vida do Shaco, o chefão da arena."],
-              ["❤️", "No modo Lenda você tem 10 vidas — cada erro custa uma."],
-              ["🏆", "Termine rápido e com poucos erros pra tirar rank S."],
-              ["✨", "Conecte sua Aster Account para garantir o selo de Verificado e foto de perfil no ranking."],
-              ["⌨️", "Atalhos: P pausa, M silencia, R reinicia."],
-            ].map(([icon, text]) => (
-              <li key={text} className="flex gap-3 rounded-xl bg-white/5 p-3">
-                <span className="text-xl">{icon}</span>
-                <span>{text}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+          {panel === "help" && (
+            <ul className="h-full space-y-2 text-xs text-white/80 overflow-y-auto no-scrollbar pr-1 sm:space-y-2.5 sm:text-sm">
+              {[
+                ["🃏", "Vire duas cartas por vez. Se forem o mesmo lutador, o par é seu."],
+                ["🔥", "Acertos seguidos geram COMBO e multiplicam seus pontos."],
+                ["💥", "Cada par encontrado tira vida do Shaco, o chefão da arena."],
+                ["❤️", "No modo Lenda você tem 10 vidas — cada erro custa uma."],
+                ["🏆", "Termine rápido e com poucos erros pra tirar rank S."],
+                ["✨", "Conecte sua Aster Account para garantir o selo de Verificado e foto no ranking."],
+                ["⌨️", "Atalhos: P pausa, M silencia, R reinicia."],
+              ].map(([icon, text]) => (
+                <li key={text} className="flex gap-2 rounded-lg bg-white/5 p-2 sm:gap-3 sm:rounded-xl sm:p-2.5">
+                  <span className="text-base sm:text-lg">{icon}</span>
+                  <span>{text}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
 
-      <footer className="mt-auto pt-8 text-center text-xs text-white/50">
+      {/* Footer */}
+      <footer className="shrink-0 pt-1 text-center text-[10px] text-white/40 sm:pt-2 sm:text-xs">
         Feito com tédio pelo{" "}
         <a
           href="https://github.com/zAstergun"
@@ -365,9 +396,6 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
           Aster
         </a>{" "}
         · agora remasterizado ✨
-        <p className="mt-1 text-[10px] text-white/30">
-          Fan game sem fins lucrativos. League of Legends e Soul Fighter são marcas da Riot Games.
-        </p>
       </footer>
     </div>
   );

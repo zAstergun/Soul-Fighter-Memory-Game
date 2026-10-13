@@ -22,7 +22,7 @@ function MainContent() {
   };
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative h-dvh max-h-dvh w-full overflow-hidden select-none">
       <Background dim={screen.name === "game"} />
       {screen.name === "menu" ? (
         <StartScreen onStart={start} initialDiff={lastDiff} />

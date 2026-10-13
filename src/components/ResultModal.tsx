@@ -42,13 +42,13 @@ export default function ResultModal({ result: r, onRetry, onMenu }: Props) {
   const seconds = Math.round(r.timeMs / 1000);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/75 px-4 py-8 backdrop-blur-sm sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/80 px-2 py-2 backdrop-blur-sm sm:px-4 sm:py-6">
       <div className="speedlines pointer-events-none fixed inset-0 opacity-60" />
 
       {stage === 0 && (
         <div className="fixed inset-0 flex items-center justify-center">
           <h2
-            className="animate-slam font-display text-[28vw] leading-none tracking-wider sm:text-[14rem]"
+            className="animate-slam font-display text-[26vw] leading-none tracking-wider sm:text-[14rem]"
             style={{
               color: r.won ? "#ffd23f" : "#ff3b3b",
               textShadow: "8px 8px 0 #120725, 0 0 60px rgba(255,61,154,0.8)",
@@ -60,25 +60,25 @@ export default function ResultModal({ result: r, onRetry, onMenu }: Props) {
       )}
 
       {stage >= 1 && (
-        <div className="animate-deal relative w-full max-w-lg rounded-3xl border border-white/15 bg-soul-ink/95 p-6 shadow-[0_30px_120px_-20px_rgba(255,61,154,0.6)] sm:p-8">
+        <div className="animate-deal relative w-full max-w-lg rounded-2xl sm:rounded-3xl border border-white/15 bg-soul-ink/95 p-4 sm:p-7 shadow-[0_25px_100px_-20px_rgba(255,61,154,0.6)] max-h-[96dvh] overflow-y-auto no-scrollbar">
           <div className="text-center">
-            <p className="font-display text-xl tracking-[0.3em] text-white/60">{r.won ? "VITÓRIA" : "GAME OVER"}</p>
+            <p className="font-display text-lg sm:text-xl tracking-[0.3em] text-white/60">{r.won ? "VITÓRIA" : "GAME OVER"}</p>
             {r.won ? (
               <>
-                <div className="relative mx-auto my-2 inline-block">
+                <div className="relative mx-auto my-1 sm:my-2 inline-block">
                   <span
-                    className="animate-slam font-display block text-[9rem] leading-none"
+                    className="animate-slam font-display block text-[6.5rem] sm:text-[9rem] leading-none"
                     style={{ color: rs.color, textShadow: `6px 6px 0 #120725, 0 0 50px ${rs.color}` }}
                   >
                     {r.rank}
                   </span>
                 </div>
-                <p className="font-display text-3xl tracking-wider" style={{ color: rs.color }}>
+                <p className="font-display text-2xl sm:text-3xl tracking-wider" style={{ color: rs.color }}>
                   {rs.label}
                 </p>
               </>
             ) : (
-              <p className="font-display my-4 text-5xl tracking-wider text-red-400">O SHACO VENCEU...</p>
+              <p className="font-display my-3 text-4xl sm:text-5xl tracking-wider text-red-400">O SHACO VENCEU...</p>
             )}
 
             <p className="mx-auto mt-3 max-w-sm text-sm text-white/70">

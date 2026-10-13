@@ -309,24 +309,25 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
     const ratio = (cols * 3) / (rows * 4);
     return {
       gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-      maxWidth: isSm ? `min(100%, calc((100dvh - 250px) * ${ratio.toFixed(3)}))` : "100%",
+      aspectRatio: `${ratio.toFixed(4)}`,
+      maxWidth: `min(100%, calc((100dvh - ${isSm ? "210px" : "155px"}) * ${ratio.toFixed(3)}))`,
     };
   }, [cols, rows, isSm]);
 
   const showAll = phase === "preview";
 
   return (
-    <div className="flex min-h-screen flex-col items-center px-3 pt-3 pb-6 sm:px-6 sm:pt-5">
-      <div className="w-full max-w-5xl">
+    <div className="h-dvh max-h-dvh w-full overflow-hidden flex flex-col items-center justify-between px-2 pt-1.5 pb-2 sm:px-5 sm:pt-3 sm:pb-3 select-none touch-manipulation">
+      <div className="w-full max-w-4xl shrink-0">
         {/* Top bar */}
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-1 flex items-center justify-between sm:mb-2">
           <button
             onClick={onExit}
-            className="rounded-full bg-black/40 px-3 py-1.5 text-xs font-bold tracking-wide text-white/70 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+            className="rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-bold tracking-wide text-white/70 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white sm:px-3 sm:py-1.5 sm:text-xs"
           >
             ← Menu
           </button>
-          <div className="flex gap-1.5">
+          <div className="flex gap-1 sm:gap-1.5">
             <IconBtn onClick={toggleMute} label={muted ? "Ativar som (M)" : "Silenciar (M)"}>
               {muted ? "🔇" : "🔊"}
             </IconBtn>
@@ -356,8 +357,8 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
       </div>
 
       {/* Tabuleiro */}
-      <div className="relative mt-4 flex w-full max-w-5xl flex-1 justify-center">
-        <div className="grid w-full gap-2 sm:gap-3" style={gridStyle}>
+      <div className="relative flex-1 min-h-0 w-full max-w-4xl flex items-center justify-center p-0.5 sm:p-1 my-auto">
+        <div className="grid w-full gap-1.5 sm:gap-2.5 max-h-full max-w-full" style={gridStyle}>
           {deck.map((f, i) => (
             <Card
               key={i}

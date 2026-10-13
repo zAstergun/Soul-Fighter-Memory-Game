@@ -28,7 +28,6 @@ export default function Leaderboard({
   const [tab, setTab] = useState<DifficultyId>(initial);
   const [loading, setLoading] = useState(true);
   const [onlineList, setOnlineList] = useState<LeaderItem[]>([]);
-  const [usingFallback, setUsingFallback] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -51,7 +50,6 @@ export default function Leaderboard({
             channel: d.profiles?.channel,
           }));
           setOnlineList(mapped);
-          setUsingFallback(false);
         } else {
           // Fallback to local storage if no database records yet
           const local = loadBoard()[tab] ?? [];
@@ -66,7 +64,6 @@ export default function Leaderboard({
             isVip: false,
           }));
           setOnlineList(mapped);
-          setUsingFallback(local.length > 0);
         }
       })
       .catch(() => {
@@ -84,7 +81,6 @@ export default function Leaderboard({
             isVip: false,
           }))
         );
-        setUsingFallback(true);
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -96,40 +92,33 @@ export default function Leaderboard({
   }, [tab]);
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full flex-1 min-h-0 flex flex-col justify-between">
       {/* Abas de Dificuldades */}
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap gap-1.5">
-          {DIFFICULTIES.map((d) => (
-            <button
-              key={d.id}
-              onClick={() => setTab(d.id)}
-              className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide transition ${
-                tab === d.id
-                  ? "bg-soul-gold text-soul-ink shadow-[0_0_12px_rgba(255,210,63,0.5)]"
-                  : "bg-white/10 text-white/70 hover:bg-white/20"
-              }`}
-            >
-              {d.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-1.5 text-[11px] text-white/40">
-          <span className={`inline-block h-2 w-2 rounded-full ${usingFallback ? "bg-amber-400" : "bg-emerald-400 animate-pulse"}`} />
-          <span>{usingFallback ? "Modo Local" : "Nuvem (Supabase)"}</span>
-        </div>
+      <div className="mb-2 shrink-0 flex items-center justify-center sm:justify-start gap-1.5 flex-wrap">
+        {DIFFICULTIES.map((d) => (
+          <button
+            key={d.id}
+            onClick={() => setTab(d.id)}
+            className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide transition ${
+              tab === d.id
+                ? "bg-soul-gold text-soul-ink shadow-[0_0_12px_rgba(255,210,63,0.5)]"
+                : "bg-white/10 text-white/70 hover:bg-white/20"
+            }`}
+          >
+            {d.label}
+          </button>
+        ))}
       </div>
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-black/20 p-8">
+        <div className="flex flex-1 min-h-0 flex-col items-center justify-center rounded-2xl border border-white/10 bg-black/20 p-4">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-soul-pink border-t-transparent" />
           <span className="mt-2 text-xs font-bold tracking-wider text-white/50 uppercase">
             Carregando ranking global...
           </span>
         </div>
       ) : onlineList.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/20 p-8 text-center">
+        <div className="flex flex-1 min-h-0 flex-col items-center justify-center rounded-2xl border border-dashed border-white/20 p-6 text-center">
           <p className="text-sm font-semibold text-white/70">
             Nenhuma luta registrada nesta categoria ainda!
           </p>
@@ -138,7 +127,7 @@ export default function Leaderboard({
           </p>
         </div>
       ) : (
-        <ol className="space-y-1.5 max-h-[360px] overflow-y-auto pr-1">
+        <ol className="flex-1 min-h-0 space-y-1.5 overflow-y-auto no-scrollbar pr-1">
           {onlineList.map((e, i) => (
             <li
               key={e.id}
