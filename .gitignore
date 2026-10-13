@@ -1,0 +1,18 @@
+# Sensitive files
+ASTER_ACCOUNTS.md
+
+# Dependencies
+node_modules/
+
+# Production build
+dist/
+
+# Env & local
+*.local
+.env*
+!.env.example
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
