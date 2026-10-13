@@ -62,3 +62,35 @@ export const saveScore = (diff: DifficultyId, entry: ScoreEntry): number => {
 
 export const getPlayerName = () => localStorage.getItem("player") ?? "";
 export const setPlayerName = (n: string) => localStorage.setItem("player", n);
+
+/** Remove todas as pontuações de um jogador do armazenamento local (usado quando o ranking é apagado no CRM) */
+export const removePlayerFromBoard = (name: string): void => {
+  const board = loadBoard();
+  const normalized = name.toLowerCase().trim();
+  let changed = false;
+  (Object.keys(board) as DifficultyId[]).forEach((diff) => {
+    if (board[diff]) {
+      const before = board[diff]!.length;
+      board[diff] = board[diff]!.filter((e) => e.name.toLowerCase().trim() !== normalized);
+      if (board[diff]!.length !== before) {
+        changed = true;
+      }
+    }
+  });
+  if (changed) {
+    localStorage.setItem(KEY, JSON.stringify(board));
+  }
+};
+
+/** Remove as pontuações de uma dificuldade específica de um jogador do armazenamento local */
+export const removePlayerDifficultyScore = (diff: DifficultyId, name: string): void => {
+  const board = loadBoard();
+  const normalized = name.toLowerCase().trim();
+  if (board[diff]) {
+    const before = board[diff]!.length;
+    board[diff] = board[diff]!.filter((e) => e.name.toLowerCase().trim() !== normalized);
+    if (board[diff]!.length !== before) {
+      localStorage.setItem(KEY, JSON.stringify(board));
+    }
+  }
+};

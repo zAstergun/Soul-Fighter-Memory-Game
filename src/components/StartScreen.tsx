@@ -375,7 +375,7 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
             </form>
           )}
 
-          {panel === "rank" && <Leaderboard initial="geral" />}
+          {panel === "rank" && <Leaderboard initial="geral" currentPlayerName={name} />}
 
           {panel === "help" && (
             <div className="h-full flex flex-col justify-between overflow-y-auto no-scrollbar pr-1 pb-2 space-y-2.5">

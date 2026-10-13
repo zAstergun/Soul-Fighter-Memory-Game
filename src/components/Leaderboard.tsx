@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { DIFFICULTIES, type DifficultyId } from "../data/fighters";
-import { getPlayerName, loadBoard } from "../lib/storage";
+import {
+  getPlayerName,
+  loadBoard,
+  removePlayerFromBoard,
+  removePlayerDifficultyScore,
+} from "../lib/storage";
 import {
   fetchGeneralLeaderboardFromDb,
   fetchLeaderboardFromDb,
@@ -55,141 +60,95 @@ export default function Leaderboard({
       fetchGeneralLeaderboardFromDb()
         .then((data: GeneralLeaderboardEntry[]) => {
           if (!active) return;
-          if (data && data.length > 0) {
-            const mapped: LeaderItem[] = data.map((d) => ({
-              id: d.player_key,
-              name: d.player_name,
-              score: Number(d.total_score),
-              timeMs: Number(d.total_time_ms),
-              moves: Number(d.total_moves),
-              rank: d.best_rank || "S",
-              isAsterAccount: d.is_aster_account,
-              isVip: d.is_vip,
-              avatarUrl: d.avatar_url,
-              channel: d.channel,
-              isGeneral: true,
-              modesPlayed: Number(d.modes_played),
-              novatoScore: d.novato_score,
-              lutadorScore: d.lutador_score,
-              lendaScore: d.lenda_score,
-              classicoScore: d.classico_score,
-            }));
+          const mapped: LeaderItem[] = (data || []).map((d) => ({
+            id: d.player_key,
+            name: d.player_name,
+            score: Number(d.total_score),
+            timeMs: Number(d.total_time_ms),
+            moves: Number(d.total_moves),
+            rank: d.best_rank || "S",
+            isAsterAccount: d.is_aster_account,
+            isVip: d.is_vip,
+            avatarUrl: d.avatar_url,
+            channel: d.channel,
+            isGeneral: true,
+            modesPlayed: Number(d.modes_played),
+            novatoScore: d.novato_score,
+            lutadorScore: d.lutador_score,
+            lendaScore: d.lenda_score,
+            classicoScore: d.classico_score,
+          }));
 
-            // Sincroniza dados locais do jogador atual se ainda não refletidos no banco geral
-            const effectivePlayer = (currentPlayerName || getPlayerName()).toLowerCase().trim();
-            if (effectivePlayer) {
-              const allLocal = loadBoard();
-              let localTotal = 0;
-              let localTime = 0;
-              let localMoves = 0;
-              let localModes = 0;
-              let bestR = "S";
-              const sMap: Record<DifficultyId, number> = { novato: 0, lutador: 0, lenda: 0, classico: 0 };
-              (Object.keys(allLocal) as DifficultyId[]).forEach((dk) => {
-                const found = (allLocal[dk] || []).find((x) => x.name.toLowerCase().trim() === effectivePlayer);
-                if (found) {
-                  sMap[dk] = found.score;
-                  localTotal += found.score;
-                  localTime += found.timeMs;
-                  localMoves += found.moves;
-                  localModes += 1;
-                  bestR = found.rank;
-                }
-              });
-
-              if (localModes > 0) {
-                const exIdx = mapped.findIndex((m) => m.name.toLowerCase().trim() === effectivePlayer);
-                if (exIdx === -1) {
-                  mapped.push({
-                    id: `local-sync-${effectivePlayer}`,
-                    name: currentPlayerName || getPlayerName() || "Guerreiro",
-                    score: localTotal,
-                    timeMs: localTime,
-                    moves: localMoves,
-                    rank: bestR,
-                    isAsterAccount: false,
-                    isVip: false,
-                    isGeneral: true,
-                    modesPlayed: localModes,
-                    novatoScore: sMap.novato,
-                    lutadorScore: sMap.lutador,
-                    lendaScore: sMap.lenda,
-                    classicoScore: sMap.classico,
-                  });
-                  mapped.sort((a, b) => b.score - a.score || a.timeMs - b.timeMs);
-                } else if (localTotal > mapped[exIdx].score) {
-                  mapped[exIdx].score = localTotal;
-                  mapped[exIdx].timeMs = localTime;
-                  mapped[exIdx].moves = localMoves;
-                  mapped[exIdx].modesPlayed = Math.max(mapped[exIdx].modesPlayed || 0, localModes);
-                  mapped.sort((a, b) => b.score - a.score || a.timeMs - b.timeMs);
-                }
-              }
+          // Se o jogador atual não consta mais no ranking do banco (ex: apagado via CRM),
+          // sincroniza limpando seus registros do armazenamento local para não ressuscitar fantasmas
+          const effectivePlayer = (currentPlayerName || getPlayerName()).toLowerCase().trim();
+          if (effectivePlayer) {
+            const inDb = mapped.some((m) => m.name.toLowerCase().trim() === effectivePlayer);
+            if (!inDb) {
+              removePlayerFromBoard(effectivePlayer);
             }
-
-            setOnlineList(mapped);
-          } else {
-            // Fallback: calcular somatória a partir do armazenamento local
-            const allLocal = loadBoard();
-            const playerMap = new Map<string, {
-              name: string;
-              totalScore: number;
-              totalTime: number;
-              totalMoves: number;
-              modes: Set<string>;
-              bestRank: string;
-              scores: Record<DifficultyId, number>;
-            }>();
-
-            (Object.keys(allLocal) as DifficultyId[]).forEach((diffKey) => {
-              const entries = allLocal[diffKey] || [];
-              entries.forEach((e) => {
-                const key = e.name.toLowerCase().trim();
-                const existing = playerMap.get(key) || {
-                  name: e.name,
-                  totalScore: 0,
-                  totalTime: 0,
-                  totalMoves: 0,
-                  modes: new Set<string>(),
-                  bestRank: e.rank,
-                  scores: { novato: 0, lutador: 0, lenda: 0, classico: 0 },
-                };
-                if (e.score > existing.scores[diffKey]) {
-                  existing.totalScore += e.score - existing.scores[diffKey];
-                  existing.scores[diffKey] = e.score;
-                  existing.totalTime += e.timeMs;
-                  existing.totalMoves += e.moves;
-                  existing.modes.add(diffKey);
-                  existing.bestRank = e.rank;
-                }
-                playerMap.set(key, existing);
-              });
-            });
-
-            const fallbackList: LeaderItem[] = Array.from(playerMap.values())
-              .sort((a, b) => b.totalScore - a.totalScore)
-              .map((p, idx) => ({
-                id: `local-gen-${idx}`,
-                name: p.name,
-                score: p.totalScore,
-                timeMs: p.totalTime,
-                moves: p.totalMoves,
-                rank: p.bestRank,
-                isAsterAccount: false,
-                isVip: false,
-                isGeneral: true,
-                modesPlayed: p.modes.size,
-                novatoScore: p.scores.novato,
-                lutadorScore: p.scores.lutador,
-                lendaScore: p.scores.lenda,
-                classicoScore: p.scores.classico,
-              }));
-            setOnlineList(fallbackList);
           }
+
+          setOnlineList(mapped);
         })
         .catch(() => {
           if (!active) return;
-          setOnlineList([]);
+          // Fallback offline se a requisição de rede falhar completamente
+          const allLocal = loadBoard();
+          const playerMap = new Map<string, {
+            name: string;
+            totalScore: number;
+            totalTime: number;
+            totalMoves: number;
+            modes: Set<string>;
+            bestRank: string;
+            scores: Record<DifficultyId, number>;
+          }>();
+
+          (Object.keys(allLocal) as DifficultyId[]).forEach((diffKey) => {
+            const entries = allLocal[diffKey] || [];
+            entries.forEach((e) => {
+              const key = e.name.toLowerCase().trim();
+              const existing = playerMap.get(key) || {
+                name: e.name,
+                totalScore: 0,
+                totalTime: 0,
+                totalMoves: 0,
+                modes: new Set<string>(),
+                bestRank: e.rank,
+                scores: { novato: 0, lutador: 0, lenda: 0, classico: 0 },
+              };
+              if (e.score > existing.scores[diffKey]) {
+                existing.totalScore += e.score - existing.scores[diffKey];
+                existing.scores[diffKey] = e.score;
+                existing.totalTime += e.timeMs;
+                existing.totalMoves += e.moves;
+                existing.modes.add(diffKey);
+                existing.bestRank = e.rank;
+              }
+              playerMap.set(key, existing);
+            });
+          });
+
+          const fallbackList: LeaderItem[] = Array.from(playerMap.values())
+            .sort((a, b) => b.totalScore - a.totalScore)
+            .map((p, idx) => ({
+              id: `local-gen-${idx}`,
+              name: p.name,
+              score: p.totalScore,
+              timeMs: p.totalTime,
+              moves: p.totalMoves,
+              rank: p.bestRank,
+              isAsterAccount: false,
+              isVip: false,
+              isGeneral: true,
+              modesPlayed: p.modes.size,
+              novatoScore: p.scores.novato,
+              lutadorScore: p.scores.lutador,
+              lendaScore: p.scores.lenda,
+              classicoScore: p.scores.classico,
+            }));
+          setOnlineList(fallbackList);
         })
         .finally(() => {
           if (active) setLoading(false);
@@ -198,86 +157,49 @@ export default function Leaderboard({
       fetchLeaderboardFromDb(tab)
         .then((data: SupabaseLeaderboardEntry[]) => {
           if (!active) return;
-          if (data && data.length > 0) {
-            // Deduplica por player (user_id se houver, ou nome normalizado) mantendo o melhor score
-            const seen = new Map<string, SupabaseLeaderboardEntry>();
-            for (const d of data) {
-              const key = d.user_id ? `u:${d.user_id}` : `n:${d.player_name.toLowerCase().trim()}`;
-              const existing = seen.get(key);
-              if (
-                !existing ||
-                d.score > existing.score ||
-                (d.score === existing.score && d.time_ms < existing.time_ms)
-              ) {
-                seen.set(key, d);
-              }
+          // Deduplica por player (user_id se houver, ou nome normalizado) mantendo o melhor score
+          const seen = new Map<string, SupabaseLeaderboardEntry>();
+          for (const d of (data || [])) {
+            const key = d.user_id ? `u:${d.user_id}` : `n:${d.player_name.toLowerCase().trim()}`;
+            const existing = seen.get(key);
+            if (
+              !existing ||
+              d.score > existing.score ||
+              (d.score === existing.score && d.time_ms < existing.time_ms)
+            ) {
+              seen.set(key, d);
             }
-
-            const deduplicated = Array.from(seen.values()).sort(
-              (a, b) => b.score - a.score || a.time_ms - b.time_ms
-            );
-
-            const mapped: LeaderItem[] = deduplicated.map((d) => ({
-              id: d.id,
-              name: d.player_name,
-              score: d.score,
-              timeMs: d.time_ms,
-              moves: d.moves,
-              rank: d.rank,
-              isAsterAccount: Boolean(d.user_id && d.profiles),
-              isVip: Boolean(d.profiles?.is_vip),
-              avatarUrl: d.profiles?.avatar_url,
-              channel: d.profiles?.channel,
-              isGeneral: false,
-            }));
-
-            // Sincroniza registro local do jogador atual se ainda não refletido no banco
-            const effectivePlayer = (currentPlayerName || getPlayerName()).toLowerCase().trim();
-            if (effectivePlayer) {
-              const localList = loadBoard()[tab] ?? [];
-              const myLocal = localList.find((l) => l.name.toLowerCase().trim() === effectivePlayer);
-              if (myLocal) {
-                const exIdx = mapped.findIndex((m) => m.name.toLowerCase().trim() === effectivePlayer);
-                if (exIdx === -1) {
-                  mapped.push({
-                    id: String(myLocal.date),
-                    name: myLocal.name,
-                    score: myLocal.score,
-                    timeMs: myLocal.timeMs,
-                    moves: myLocal.moves,
-                    rank: myLocal.rank,
-                    isAsterAccount: false,
-                    isVip: false,
-                    isGeneral: false,
-                  });
-                  mapped.sort((a, b) => b.score - a.score || a.timeMs - b.timeMs);
-                } else if (myLocal.score > mapped[exIdx].score) {
-                  mapped[exIdx].score = myLocal.score;
-                  mapped[exIdx].timeMs = myLocal.timeMs;
-                  mapped[exIdx].moves = myLocal.moves;
-                  mapped[exIdx].rank = myLocal.rank;
-                  mapped.sort((a, b) => b.score - a.score || a.timeMs - b.timeMs);
-                }
-              }
-            }
-
-            setOnlineList(mapped);
-          } else {
-            // Fallback to local storage if no database records yet
-            const local = loadBoard()[tab] ?? [];
-            const mapped: LeaderItem[] = local.map((l) => ({
-              id: String(l.date),
-              name: l.name,
-              score: l.score,
-              timeMs: l.timeMs,
-              moves: l.moves,
-              rank: l.rank,
-              isAsterAccount: false,
-              isVip: false,
-              isGeneral: false,
-            }));
-            setOnlineList(mapped);
           }
+
+          const deduplicated = Array.from(seen.values()).sort(
+            (a, b) => b.score - a.score || a.time_ms - b.time_ms
+          );
+
+          const mapped: LeaderItem[] = deduplicated.map((d) => ({
+            id: d.id,
+            name: d.player_name,
+            score: d.score,
+            timeMs: d.time_ms,
+            moves: d.moves,
+            rank: d.rank,
+            isAsterAccount: Boolean(d.user_id && d.profiles),
+            isVip: Boolean(d.profiles?.is_vip),
+            avatarUrl: d.profiles?.avatar_url,
+            channel: d.profiles?.channel,
+            isGeneral: false,
+          }));
+
+          // Se o jogador atual não consta mais nesta dificuldade no banco (ex: apagado via CRM),
+          // sincroniza limpando do armazenamento local específico para evitar discrepâncias
+          const effectivePlayer = (currentPlayerName || getPlayerName()).toLowerCase().trim();
+          if (effectivePlayer) {
+            const inDb = mapped.some((m) => m.name.toLowerCase().trim() === effectivePlayer);
+            if (!inDb) {
+              removePlayerDifficultyScore(tab, effectivePlayer);
+            }
+          }
+
+          setOnlineList(mapped);
         })
         .catch(() => {
           if (!active) return;
