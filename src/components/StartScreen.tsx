@@ -337,6 +337,9 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                               <span className="rounded bg-soul-pink/20 px-1 py-0.2 text-[8.5px] font-bold text-soul-pink border border-soul-pink/30 sm:text-[9.5px]">
                                 {t("diff.pts_badge", { multiplier: d.scoreMultiplier.toFixed(1) })}
                               </span>
+                              <span className="rounded bg-soul-cyan/20 px-1 py-0.2 text-[8.5px] font-bold text-soul-cyan border border-soul-cyan/30 sm:text-[9.5px]">
+                                💡 {d.hints} {t("diff.hints_badge")}
+                              </span>
                             </div>
                             <p className="text-[9.5px] sm:text-[10px] leading-tight text-white/60 truncate">
                               {t(`diff.${d.id}.desc`)}
@@ -481,6 +484,40 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                     {t("guide.card4_desc")}
                   </p>
                 </div>
+
+                {/* Card 5: Sistema de Dicas Espirituais */}
+                <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2.5 flex flex-col justify-between hover:border-soul-cyan/40 transition sm:col-span-2">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-soul-cyan/15 text-soul-cyan text-sm shadow-sm border border-soul-cyan/30">
+                      💡
+                    </span>
+                    <div>
+                      <h4 className="font-display text-xs tracking-wide text-white font-bold">
+                        {t("guide.card_hints_title")}
+                      </h4>
+                      <span className="text-[9.5px] text-soul-cyan uppercase font-bold tracking-wider">
+                        {t("guide.card_hints_tag")}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-white/70 mb-2">
+                    {t("guide.card_hints_desc")}
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 text-[10px]">
+                    <span className="rounded bg-black/40 px-1.5 py-0.5 text-emerald-300 border border-emerald-500/20 text-center">
+                      {t("diff.novato.label")}: <strong>3 💡 (-100 PTS)</strong>
+                    </span>
+                    <span className="rounded bg-black/40 px-1.5 py-0.5 text-soul-gold border border-soul-gold/20 text-center">
+                      {t("diff.lutador.label")}: <strong>2 💡 (-200 PTS)</strong>
+                    </span>
+                    <span className="rounded bg-black/40 px-1.5 py-0.5 text-violet-300 border border-violet-500/20 text-center">
+                      {t("diff.classico.label")}: <strong>2 💡 (-250 PTS)</strong>
+                    </span>
+                    <span className="rounded bg-black/40 px-1.5 py-0.5 text-soul-pink border border-soul-pink/30 font-bold text-center">
+                      {t("diff.lenda.label")}: <strong>1 💡 (-400 PTS)</strong>
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* Barra de Atalhos de Teclado no Rodapé */}
@@ -488,12 +525,15 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                 <span className="font-bold text-white flex items-center gap-1.5">
                   <span>⌨️</span> {t("guide.shortcuts_title")}
                 </span>
-                <div className="flex items-center gap-3 font-mono text-[10.5px]">
+                <div className="flex items-center gap-2.5 sm:gap-3 font-mono text-[10.5px]">
                   <span className="inline-flex items-center gap-1">
                     <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-gold font-bold shadow">P</kbd> {t("guide.shortcut_pause")}
                   </span>
                   <span className="inline-flex items-center gap-1">
-                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-cyan font-bold shadow">M</kbd> {t("guide.shortcut_audio")}
+                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-cyan font-bold shadow">H</kbd> {t("guide.shortcut_hint")}
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-white/80 font-bold shadow">M</kbd> {t("guide.shortcut_audio")}
                   </span>
                   <span className="inline-flex items-center gap-1">
                     <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-pink font-bold shadow">R</kbd> {t("guide.shortcut_restart")}

@@ -56,6 +56,7 @@ export const ja: TranslationDictionary = {
       desc: "旧バージョン準拠：5チャンピオン、各4枚のカード構成。",
     },
     pts_badge: "{multiplier}x PTS",
+    hints_badge: "ヒント",
   },
   play_btn: {
     ready: "ファイト！",
@@ -75,10 +76,14 @@ export const ja: TranslationDictionary = {
     card4_title: "総合ランキング",
     card4_tag: "合算スコア＆単一レコード",
     card4_desc: "全モードでの最高得点が総合ランキングに合算されます。各アカウントは1モードにつき1つの順位を保持し、自己ベスト更新で上書きされます！",
+    card_hints_title: "スピリチュアルヒント機能",
+    card_hints_tag: "戦術サポートとスコアペナルティ",
+    card_hints_desc: "行き詰まったら [H] キーまたは電球ボタンを押すと、隠れたペアが一時的にハイライトされます。難易度ごとに使用回数とスコア減点が異なります：初段（3回 · -100点）、闘士（2回 · -200点）、クラシック（2回 · -250点）、覇王（1回 · -400点）。賢く使いましょう！",
     shortcuts_title: "クイックショートカット：",
     shortcut_pause: "一時停止",
     shortcut_audio: "サウンド",
     shortcut_restart: "リスタート",
+    shortcut_hint: "[H] ヒントを使う",
   },
   footer: {
     made_by: "制作：{author} · リマスター版 ✨",
@@ -97,6 +102,9 @@ export const ja: TranslationDictionary = {
     sound_mute: "音声をオフ (M)",
     restart_btn: "リスタート (R)",
     pause_btn: "ポーズ (P)",
+    hint_btn: "ヒント",
+    hint_tooltip: "ヒントを使う (残り{remaining}回 · -{penalty} PTS)",
+    hint_used_popup: "ヒント使用！ (-{penalty} PTS)",
   },
   phases: {
     round_1: "ROUND 1",
@@ -122,6 +130,7 @@ export const ja: TranslationDictionary = {
     pairs_and_combos: "ペア＋コンボ",
     time_bonus: "タイムボーナス",
     life_bonus: "ライフボーナス",
+    hints_penalty: "ヒント減点 ({count}回)",
     total: "総合スコア",
     new_record: "🏆 新記録！ ランキング #{pos}",
     menu_btn: "メニュー",
@@ -192,5 +201,6 @@ export const ja: TranslationDictionary = {
   card: {
     prestige: "プレステージ",
     face_down: "カード {index}、裏面",
+    hint_mark: "ヒント",
   },
 };

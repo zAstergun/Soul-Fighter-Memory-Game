@@ -56,6 +56,7 @@ export const ru: TranslationDictionary = {
       desc: "Как в старой версии: 5 чемпионов, по 4 карты каждого.",
     },
     pts_badge: "{multiplier}x ОЧК",
+    hints_badge: "Подсказки",
   },
   play_btn: {
     ready: "В БОЙ!",
@@ -75,10 +76,14 @@ export const ru: TranslationDictionary = {
     card4_title: "Общий рейтинг",
     card4_tag: "Сумма очков и лучший рекорд",
     card4_desc: "Ваши лучшие результаты в каждом режиме суммируются в общем рейтинге. Каждый аккаунт занимает только 1 место в режиме!",
+    card_hints_title: "Система Духовных Подсказок",
+    card_hints_tag: "Тактическая Помощь и Штраф",
+    card_hints_desc: "Застряли на арене? Нажмите [H] или кнопку-лампочку, чтобы временно подсветить скрытую пару. Для каждой сложности действует свой лимит и штраф к очкам: Новичок (3 подсказки · -100 очков), Боец (2 подсказки · -200 очков), Классика (2 подсказки · -250 очков) и Легенда (1 подсказка · -400 очков).",
     shortcuts_title: "Быстрые клавиши:",
     shortcut_pause: "Пауза",
     shortcut_audio: "Звук",
     shortcut_restart: "Перезапуск",
+    shortcut_hint: "[H] Запросить Подсказку",
   },
   footer: {
     made_by: "Создано с душой автором {author} · обновленная версия ✨",
@@ -97,6 +102,9 @@ export const ru: TranslationDictionary = {
     sound_mute: "Заглушить звук (M)",
     restart_btn: "Перезапуск (R)",
     pause_btn: "Пауза (P)",
+    hint_btn: "Подсказка",
+    hint_tooltip: "Использовать подсказку (осталось {remaining} · -{penalty} PTS)",
+    hint_used_popup: "ПОДСКАЗКА ИСПОЛЬЗОВАНА! (-{penalty} PTS)",
   },
   phases: {
     round_1: "РАУНД 1",
@@ -122,6 +130,7 @@ export const ru: TranslationDictionary = {
     pairs_and_combos: "Пары + комбо",
     time_bonus: "Бонус времени",
     life_bonus: "Бонус жизней",
+    hints_penalty: "Штраф за подсказки ({count})",
     total: "ИТОГО",
     new_record: "🏆 Новый рекорд! #{pos} в таблице лидеров",
     menu_btn: "Меню",
@@ -192,5 +201,6 @@ export const ru: TranslationDictionary = {
   card: {
     prestige: "ПРЕСТИЖ",
     face_down: "Карта {index}, рубашкой вверх",
+    hint_mark: "СОВЕТ",
   },
 };

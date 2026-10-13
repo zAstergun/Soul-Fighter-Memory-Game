@@ -66,6 +66,8 @@ export type Difficulty = {
   pairBaseScore: number;
   comboBonusStep: number;
   scoreBadge: string;
+  hints: number;
+  hintPenalty: number;
 };
 
 export const DIFFICULTIES: Difficulty[] = [
@@ -84,6 +86,8 @@ export const DIFFICULTIES: Difficulty[] = [
     pairBaseScore: 100,
     comboBonusStep: 50,
     scoreBadge: "1.0x PTS",
+    hints: 3,
+    hintPenalty: 100,
   },
   {
     id: "lutador",
@@ -100,6 +104,8 @@ export const DIFFICULTIES: Difficulty[] = [
     pairBaseScore: 150,
     comboBonusStep: 75,
     scoreBadge: "1.5x PTS",
+    hints: 2,
+    hintPenalty: 200,
   },
   {
     id: "lenda",
@@ -116,6 +122,8 @@ export const DIFFICULTIES: Difficulty[] = [
     pairBaseScore: 300,
     comboBonusStep: 150,
     scoreBadge: "3.0x PTS",
+    hints: 1,
+    hintPenalty: 400,
   },
   {
     id: "classico",
@@ -132,6 +140,8 @@ export const DIFFICULTIES: Difficulty[] = [
     pairBaseScore: 200,
     comboBonusStep: 100,
     scoreBadge: "2.0x PTS",
+    hints: 2,
+    hintPenalty: 250,
   },
 ];
 

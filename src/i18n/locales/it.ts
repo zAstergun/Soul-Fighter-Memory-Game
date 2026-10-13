@@ -56,6 +56,7 @@ export const it: TranslationDictionary = {
       desc: "Come nella versione originale: 5 campioni, 4 carte ciascuno.",
     },
     pts_badge: "{multiplier}x PUNTI",
+    hints_badge: "Suggerimenti",
   },
   play_btn: {
     ready: "LOTTA!",
@@ -75,10 +76,14 @@ export const it: TranslationDictionary = {
     card4_title: "Classifica Generale",
     card4_tag: "Somma & Record Unico",
     card4_desc: "Il tuo miglior punteggio di ogni modalità viene sommato nella Classifica Generale. Ogni account occupa solo 1 posto per modalità!",
+    card_hints_title: "Sistema di Suggerimenti Spirituali",
+    card_hints_tag: "Aiuto Tattico e Penalità",
+    card_hints_desc: "Bloccato nell'arena? Premi [H] o tocca la lampadina per evidenziare temporaneamente una coppia nascosta. Ogni difficoltà ha il suo limite e penalità in punti: Novizio (3 suggerimenti · -100 pt), Combattente (2 suggerimenti · -200 pt), Classico (2 suggerimenti · -250 pt) e Leggenda (1 suggerimento · -400 pt).",
     shortcuts_title: "Scorciatoie Rapide:",
     shortcut_pause: "Pausa",
     shortcut_audio: "Audio",
     shortcut_restart: "Riavvia",
+    shortcut_hint: "[H] Chiedi Suggerimento",
   },
   footer: {
     made_by: "Creato con passione da {author} · ora rimasterizzato ✨",
@@ -97,6 +102,9 @@ export const it: TranslationDictionary = {
     sound_mute: "Disattiva audio (M)",
     restart_btn: "Riavvia (R)",
     pause_btn: "Pausa (P)",
+    hint_btn: "Aiuto",
+    hint_tooltip: "Chiedi Suggerimento ({remaining} rimasti · -{penalty} PTS)",
+    hint_used_popup: "SUGGERIMENTO USATO! (-{penalty} PTS)",
   },
   phases: {
     round_1: "ROUND 1",
@@ -122,6 +130,7 @@ export const it: TranslationDictionary = {
     pairs_and_combos: "Coppie + combo",
     time_bonus: "Bonus tempo",
     life_bonus: "Bonus vite",
+    hints_penalty: "Penalità Suggerimenti ({count})",
     total: "TOTALE",
     new_record: "🏆 Nuovo record! #{pos} in classifica",
     menu_btn: "Menu",
@@ -192,5 +201,6 @@ export const it: TranslationDictionary = {
   card: {
     prestige: "PRESTIGIO",
     face_down: "Carta {index}, coperta",
+    hint_mark: "AIUTO",
   },
 };

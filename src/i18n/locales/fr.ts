@@ -56,6 +56,7 @@ export const fr: TranslationDictionary = {
       desc: "Comme l'ancienne version : 5 combattants, 4 cartes chacun.",
     },
     pts_badge: "{multiplier}x PTS",
+    hints_badge: "Indices",
   },
   play_btn: {
     ready: "COMBATTRE !",
@@ -75,10 +76,14 @@ export const fr: TranslationDictionary = {
     card4_title: "Classement Général",
     card4_tag: "Somme & Record Unique",
     card4_desc: "Vos meilleurs scores de chaque mode sont cumulés dans le Classement Général. Chaque compte occupe une seule place par mode !",
+    card_hints_title: "Système d'Indices Spirituels",
+    card_hints_tag: "Aide Tactique et Pénalité",
+    card_hints_desc: "Bloqué dans l'arène ? Appuyez sur [H] ou cliquez sur l'ampoule pour révéler temporairement une paire cachée. Chaque difficulté possède son quota et coût en points : Novice (3 indices · -100 pts), Combattant (2 indices · -200 pts), Classique (2 indices · -250 pts) et Légende (1 indice · -400 pts).",
     shortcuts_title: "Raccourcis Clavier :",
     shortcut_pause: "Pause",
     shortcut_audio: "Audio",
     shortcut_restart: "Recommencer",
+    shortcut_hint: "[H] Demander un Indice",
   },
   footer: {
     made_by: "Créé avec passion par {author} · désormais remasterisé ✨",
@@ -97,6 +102,9 @@ export const fr: TranslationDictionary = {
     sound_mute: "Couper son (M)",
     restart_btn: "Recommencer (R)",
     pause_btn: "Pause (P)",
+    hint_btn: "Indice",
+    hint_tooltip: "Demander un Indice ({remaining} restants · -{penalty} PTS)",
+    hint_used_popup: "INDICE UTILISÉ ! (-{penalty} PTS)",
   },
   phases: {
     round_1: "ROUND 1",
@@ -122,6 +130,7 @@ export const fr: TranslationDictionary = {
     pairs_and_combos: "Paires + combos",
     time_bonus: "Bonus de temps",
     life_bonus: "Bonus de vies",
+    hints_penalty: "Pénalité d'Indices ({count})",
     total: "TOTAL",
     new_record: "🏆 Nouveau record ! #{pos} au classement",
     menu_btn: "Menu",
@@ -192,5 +201,6 @@ export const fr: TranslationDictionary = {
   card: {
     prestige: "PRESTIGE",
     face_down: "Carte {index}, face cachée",
+    hint_mark: "INDICE",
   },
 };

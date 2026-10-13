@@ -75,6 +75,11 @@ export const sfx = {
   combo: () => {
     [0, 0.06, 0.12, 0.18].forEach((d, i) => tone({ freq: 700 + i * 180, dur: 0.08, vol: 0.05, delay: d }));
   },
+  hint: () => {
+    [0, 0.07, 0.14].forEach((d, i) =>
+      tone({ freq: 784 + i * 261, to: 1046 + i * 200, dur: 0.14, type: "sine", vol: 0.08, delay: d })
+    );
+  },
   miss: () => {
     tone({ freq: 220, to: 110, dur: 0.22, type: "sawtooth", vol: 0.05 });
   },

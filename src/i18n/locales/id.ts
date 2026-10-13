@@ -56,6 +56,7 @@ export const id: TranslationDictionary = {
       desc: "Seperti versi lama: 5 petarung, masing-masing 4 kartu.",
     },
     pts_badge: "{multiplier}x POIN",
+    hints_badge: "Petunjuk",
   },
   play_btn: {
     ready: "BERTARUNG!",
@@ -75,10 +76,14 @@ export const id: TranslationDictionary = {
     card4_title: "Peringkat Keseluruhan",
     card4_tag: "Total Skor & Rekor Tunggal",
     card4_desc: "Skor terbaikmu di setiap mode digabungkan di Peringkat Keseluruhan. Tiap akun hanya menempati 1 posisi per mode!",
+    card_hints_title: "Sistem Petunjuk Spiritual",
+    card_hints_tag: "Bantuan Taktis & Poin Berkurang",
+    card_hints_desc: "Buntu di arena? Tekan [H] atau klik tombol lampu untuk menyorot sepasang kartu tersembunyi. Setiap tingkat kesulitan memiliki batas petunjuk dan penalti skor: Pemula (3 petunjuk · -100 poin), Petarung (2 petunjuk · -200 poin), Klasik (2 petunjuk · -250 poin), dan Legenda (1 petunjuk · -400 poin).",
     shortcuts_title: "Pintasan Cepat:",
     shortcut_pause: "Jeda",
     shortcut_audio: "Suara",
     shortcut_restart: "Mulai Ulang",
+    shortcut_hint: "[H] Minta Petunjuk",
   },
   footer: {
     made_by: "Dibuat dengan semangat oleh {author} · kini diremaster ✨",
@@ -97,6 +102,9 @@ export const id: TranslationDictionary = {
     sound_mute: "Bisukan suara (M)",
     restart_btn: "Mulai ulang (R)",
     pause_btn: "Jeda (P)",
+    hint_btn: "Petunjuk",
+    hint_tooltip: "Gunakan Petunjuk (sisa {remaining} · -{penalty} PTS)",
+    hint_used_popup: "PETUNJUK DIGUNAKAN! (-{penalty} PTS)",
   },
   phases: {
     round_1: "RONDE 1",
@@ -122,6 +130,7 @@ export const id: TranslationDictionary = {
     pairs_and_combos: "Pasangan + kombo",
     time_bonus: "Bonus waktu",
     life_bonus: "Bonus nyawa",
+    hints_penalty: "Penalti Petunjuk ({count})",
     total: "TOTAL",
     new_record: "🏆 Rekor baru! #{pos} di peringkat",
     menu_btn: "Menu",
@@ -192,5 +201,6 @@ export const id: TranslationDictionary = {
   card: {
     prestige: "PRESTIGE",
     face_down: "Kartu {index}, tertutup",
+    hint_mark: "PETUNJUK",
   },
 };

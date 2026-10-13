@@ -56,6 +56,7 @@ export const ptBR: TranslationDictionary = {
       desc: "Como na versão antiga: 5 lutadores, 4 cartas de cada.",
     },
     pts_badge: "{multiplier}x PTS",
+    hints_badge: "Dicas",
   },
   play_btn: {
     ready: "LUTAR!",
@@ -75,10 +76,14 @@ export const ptBR: TranslationDictionary = {
     card4_title: "Ranking Geral",
     card4_tag: "Somatória & Recorde Único",
     card4_desc: "Sua melhor pontuação de cada modo é somada no Ranking Geral. Cada conta só ocupa 1 lugar por modo: bater seu recorde substitui a marca anterior!",
+    card_hints_title: "Sistema de Dicas Espirituais",
+    card_hints_tag: "Ajuda Tática & Penalidade",
+    card_hints_desc: "Travou na arena? Pressione [H] ou clique no botão de lâmpada para iluminar temporariamente um par oculto. Cada dificuldade possui um limite de dicas e dedução de pontuação: Novato (3 dicas · -100 pts), Lutador (2 dicas · -200 pts), Clássico (2 dicas · -250 pts) e Lenda (1 dica · -400 pts). Use com estratégia!",
     shortcuts_title: "Atalhos Rápidos:",
     shortcut_pause: "Pausar",
     shortcut_audio: "Áudio",
     shortcut_restart: "Reiniciar",
+    shortcut_hint: "[H] Pedir Dica",
   },
   footer: {
     made_by: "Feito com tédio pelo {author} · agora remasterizado ✨",
@@ -97,6 +102,9 @@ export const ptBR: TranslationDictionary = {
     sound_mute: "Silenciar (M)",
     restart_btn: "Reiniciar (R)",
     pause_btn: "Pausar (P)",
+    hint_btn: "Dica",
+    hint_tooltip: "Pedir Dica ({remaining} restantes · -{penalty} PTS)",
+    hint_used_popup: "DICA USADA! (-{penalty} PTS)",
   },
   phases: {
     round_1: "ROUND 1",
@@ -122,6 +130,7 @@ export const ptBR: TranslationDictionary = {
     pairs_and_combos: "Pares + combos",
     time_bonus: "Bônus de tempo",
     life_bonus: "Bônus de vidas",
+    hints_penalty: "Dedução por Dicas ({count})",
     total: "TOTAL",
     new_record: "🏆 Novo recorde! #{pos} no ranking",
     menu_btn: "Menu",
@@ -192,5 +201,6 @@ export const ptBR: TranslationDictionary = {
   card: {
     prestige: "PRESTÍGIO",
     face_down: "Carta {index}, virada para baixo",
+    hint_mark: "DICA",
   },
 };

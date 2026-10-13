@@ -56,6 +56,7 @@ export const zhCN: TranslationDictionary = {
       desc: "原版复刻：5位英雄，每位英雄4张卡牌。",
     },
     pts_badge: "{multiplier}x 积分",
+    hints_badge: "提示",
   },
   play_btn: {
     ready: "开战！",
@@ -75,10 +76,14 @@ export const zhCN: TranslationDictionary = {
     card4_title: "全能天梯总榜",
     card4_tag: "综合积分 & 独立记录",
     card4_desc: "你在各模式下的最佳成绩将合并累计至全能天梯榜。每个账户在每个模式下仅保留1项最高纪录！",
+    card_hints_title: "灵魂战术提示系统",
+    card_hints_tag: "战术援助与扣分惩罚",
+    card_hints_desc: "对局遇到困难？按 [H] 键或点击灯泡按钮即可短暂照亮一对隐藏卡牌。不同难度拥有不同的提示次数与扣分惩罚：新手（3次提示 · -100分）、格斗家（2次提示 · -200分）、经典（2次提示 · -250分）以及传奇（1次提示 · -400分）。合理规划你的提示！",
     shortcuts_title: "快捷键列表：",
     shortcut_pause: "暂停",
     shortcut_audio: "声音",
     shortcut_restart: "重新开始",
+    shortcut_hint: "[H] 获取提示",
   },
   footer: {
     made_by: "由 {author} 倾心制作 · 重制版 ✨",
@@ -97,6 +102,9 @@ export const zhCN: TranslationDictionary = {
     sound_mute: "静音 (M)",
     restart_btn: "重新开始 (R)",
     pause_btn: "暂停 (P)",
+    hint_btn: "提示",
+    hint_tooltip: "使用提示（剩余 {remaining} 次 · -{penalty} 分）",
+    hint_used_popup: "已使用提示！(-{penalty} 分)",
   },
   phases: {
     round_1: "第 1 回合",
@@ -122,6 +130,7 @@ export const zhCN: TranslationDictionary = {
     pairs_and_combos: "卡牌对数 + 连击加成",
     time_bonus: "时间奖励",
     life_bonus: "生命奖励",
+    hints_penalty: "提示扣分 ({count})",
     total: "总计积分",
     new_record: "🏆 新纪录！位列天梯榜第 #{pos} 名",
     menu_btn: "返回主页",
@@ -192,5 +201,6 @@ export const zhCN: TranslationDictionary = {
   card: {
     prestige: "至臻",
     face_down: "卡牌 {index}，背面朝上",
+    hint_mark: "提示",
   },
 };

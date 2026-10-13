@@ -69,11 +69,18 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
   const [popups, setPopups] = useState<Popup[]>([]);
   const [result, setResult] = useState<Result | null>(null);
 
+  // Sistema de Dicas
+  const [hintsRemaining, setHintsRemaining] = useState(diff.hints);
+  const [hintedCards, setHintedCards] = useState<number[]>([]);
+
   // refs (fonte da verdade dentro de callbacks/timeouts)
   const r = useRef({
     phase: "intro" as Phase,
     paused: false,
     lock: false,
+    hintLock: false,
+    hintsRemaining: diff.hints,
+    hintsUsed: 0,
     revealed: [] as number[],
     matched: new Set<number>(),
     moves: 0,
@@ -147,7 +154,8 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
       const timeBonus = won ? Math.max(0, Math.round((par - seconds) * timeBonusRate)) : 0;
       const lifeBonusRate = Math.round(150 * diff.scoreMultiplier);
       const lifeBonus = won && s.lives !== null ? s.lives * lifeBonusRate : 0;
-      const total = s.score + timeBonus + lifeBonus;
+      const hintPenalty = s.hintsUsed * diff.hintPenalty;
+      const total = Math.max(0, s.score + timeBonus + lifeBonus - hintPenalty);
       const rank = getRank(accuracy);
       const date = Date.now();
       const position = won
@@ -179,6 +187,8 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
             baseScore: s.score,
             timeBonus,
             lifeBonus,
+            hintsUsed: s.hintsUsed,
+            hintPenalty,
             score: total,
             rank,
             position,
@@ -190,6 +200,63 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
     },
     [difficulty, playerName, totalMatches]
   );
+
+  const triggerHint = useCallback(() => {
+    const s = r.current;
+    if (s.phase !== "playing" || s.paused || s.lock || s.hintLock || s.hintsRemaining <= 0) return;
+
+    // Se já tiver 1 carta virada, busca o par dessa carta virada
+    let targetPair: [number, number] | null = null;
+    if (s.revealed.length === 1) {
+      const firstIdx = s.revealed[0];
+      const matchId = deck[firstIdx].id;
+      const partnerIdx = deck.findIndex(
+        (f, idx) => idx !== firstIdx && f.id === matchId && !s.matched.has(idx)
+      );
+      if (partnerIdx !== -1) {
+        targetPair = [firstIdx, partnerIdx];
+      }
+    }
+
+    // Se não tiver carta virada, busca qualquer par ainda não descoberto
+    if (!targetPair) {
+      const unmatchedIndices: number[] = [];
+      deck.forEach((_, idx) => {
+        if (!s.matched.has(idx) && !s.revealed.includes(idx)) {
+          unmatchedIndices.push(idx);
+        }
+      });
+
+      const grouped: Record<string, number[]> = {};
+      unmatchedIndices.forEach((idx) => {
+        const id = deck[idx].id;
+        if (!grouped[id]) grouped[id] = [];
+        grouped[id].push(idx);
+      });
+
+      const availableIds = Object.keys(grouped).filter((id) => grouped[id].length >= 2);
+      if (availableIds.length > 0) {
+        const randomId = availableIds[Math.floor(Math.random() * availableIds.length)];
+        targetPair = [grouped[randomId][0], grouped[randomId][1]];
+      }
+    }
+
+    if (!targetPair) return;
+
+    s.hintsRemaining -= 1;
+    s.hintsUsed += 1;
+    s.hintLock = true;
+    setHintsRemaining(s.hintsRemaining);
+    setHintedCards(targetPair);
+    sfx.hint();
+
+    popup(t("hud.hint_used_popup", { penalty: diff.hintPenalty }), "#3ee0ff", true);
+
+    later(() => {
+      setHintedCards([]);
+      s.hintLock = false;
+    }, 1800);
+  }, [deck, diff.hintPenalty, popup, t]);
 
   const handleClick = useCallback(
     (i: number) => {
@@ -293,10 +360,11 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
       if (k === "p" || k === "escape") togglePause();
       else if (k === "m") toggleMute();
       else if (k === "r" && !result) onRestart();
+      else if (k === "h" || k === "d") triggerHint();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [togglePause, toggleMute, onRestart, result]);
+  }, [togglePause, toggleMute, onRestart, result, triggerHint]);
 
   // pausa automática ao trocar de aba
   useEffect(() => {
@@ -333,6 +401,23 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
             {t("hud.menu_btn")}
           </button>
           <div className="flex items-center gap-1 sm:gap-1.5">
+            {/* Botão de Dica */}
+            <button
+              type="button"
+              onClick={triggerHint}
+              disabled={phase !== "playing" || paused || hintsRemaining <= 0 || hintedCards.length > 0}
+              className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold tracking-wide transition ring-1 sm:px-3 sm:py-1.5 sm:text-xs ${
+                hintsRemaining > 0 && phase === "playing" && !paused
+                  ? "bg-soul-cyan/20 text-soul-cyan ring-soul-cyan/40 hover:bg-soul-cyan/30 hover:scale-105 active:scale-95 shadow-[0_0_12px_rgba(62,224,255,0.3)] cursor-pointer"
+                  : "bg-white/5 text-white/30 ring-white/10 cursor-not-allowed"
+              }`}
+              title={t("hud.hint_tooltip", { remaining: hintsRemaining, penalty: diff.hintPenalty })}
+            >
+              <span className="text-sm">💡</span>
+              <span className="font-display tracking-wider text-xs sm:text-sm">
+                {t("hud.hint_btn")} ({hintsRemaining})
+              </span>
+            </button>
             <LanguageSelector compact />
             <IconBtn onClick={toggleMute} label={muted ? t("hud.sound_unmute") : t("hud.sound_mute")}>
               {muted ? "🔇" : "🔊"}
@@ -374,6 +459,7 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
               matched={matched.has(i)}
               wrong={wrong.includes(i)}
               justMatched={justMatched.includes(i)}
+              hinted={hintedCards.includes(i)}
               onClick={handleClick}
             />
           ))}

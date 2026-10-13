@@ -56,6 +56,7 @@ export const ar: TranslationDictionary = {
       desc: "مثل الإصدار الأصلي: 5 أبطال، 4 بطاقات لكل بطل.",
     },
     pts_badge: "{multiplier}x نقطة",
+    hints_badge: "تلميحات",
   },
   play_btn: {
     ready: "قاتل!",
@@ -75,10 +76,14 @@ export const ar: TranslationDictionary = {
     card4_title: "التصنيف العام",
     card4_tag: "المجموع والرقم القياسي",
     card4_desc: "يتم جمع أفضل درجاتك في كل نمط ضمن التصنيف العام. كل حساب يشغل مقعداً واحداً فقط في كل نمط!",
+    card_hints_title: "نظام التلميحات الروحية",
+    card_hints_tag: "مساعدة تكتيكية وعقوبة",
+    card_hints_desc: "هل أنت عالق في الحلبة؟ اضغط على [H] أو انقر على رمز المصباح لإظهار زوج متطابق مؤقتًا. كل مستوى صعوبة يمنح عددًا محددًا وتكلفة نقاط: مبتدئ (3 تلميحات · -100 نقطة)، مقاتل (تلميحان · -200 نقطة)، كلاسيكي (تلميحان · -250 نقطة)، وأسطورة (تلميح واحد · -400 نقطة).",
     shortcuts_title: "اختصارات سريعة:",
     shortcut_pause: "إيقاف مؤقت",
     shortcut_audio: "الصوت",
     shortcut_restart: "إعادة التشغيل",
+    shortcut_hint: "[H] طلب تلميح",
   },
   footer: {
     made_by: "صُنع بشغف بواسطة {author} · الآن بنسخة مُحسنة ✨",
@@ -97,6 +102,9 @@ export const ar: TranslationDictionary = {
     sound_mute: "كتم الصوت (M)",
     restart_btn: "إعادة (R)",
     pause_btn: "إيقاف (P)",
+    hint_btn: "تلميح",
+    hint_tooltip: "طلب تلميح ({remaining} متبقية · -{penalty} نقطة)",
+    hint_used_popup: "تم استخدام التلميح! (-{penalty} نقطة)",
   },
   phases: {
     round_1: "الجولة 1",
@@ -122,6 +130,7 @@ export const ar: TranslationDictionary = {
     pairs_and_combos: "الأزواج + الكومبو",
     time_bonus: "مكافأة الوقت",
     life_bonus: "مكافأة الأرواح",
+    hints_penalty: "خصم التلميحات ({count})",
     total: "المجموع",
     new_record: "🏆 رقم قياسي جديد! المركز #{pos} في التصنيف",
     menu_btn: "القائمة",
@@ -192,5 +201,6 @@ export const ar: TranslationDictionary = {
   card: {
     prestige: "بريستيج",
     face_down: "بطاقة {index}، مقلوبة لأسفل",
+    hint_mark: "تلميح",
   },
 };

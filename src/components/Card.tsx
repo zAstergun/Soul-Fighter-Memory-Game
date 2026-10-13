@@ -9,6 +9,7 @@ type Props = {
   matched: boolean;
   wrong: boolean;
   justMatched: boolean;
+  hinted?: boolean;
   onClick: (index: number) => void;
 };
 
@@ -42,7 +43,7 @@ function CardBack() {
   );
 }
 
-function Card({ fighter, index, revealed, matched, wrong, justMatched, onClick }: Props) {
+function Card({ fighter, index, revealed, matched, wrong, justMatched, hinted = false, onClick }: Props) {
   const { t } = useI18n();
   const flipped = revealed || matched;
   return (
@@ -51,7 +52,9 @@ function Card({ fighter, index, revealed, matched, wrong, justMatched, onClick }
       onClick={() => onClick(index)}
       aria-label={flipped ? fighter.name : t("card.face_down", { index: index + 1 })}
       disabled={matched}
-      className="animate-deal group relative aspect-[3/4] w-full cursor-pointer rounded-xl outline-none focus-visible:ring-4 focus-visible:ring-soul-cyan disabled:cursor-default"
+      className={`animate-deal group relative aspect-[3/4] w-full cursor-pointer rounded-xl outline-none focus-visible:ring-4 focus-visible:ring-soul-cyan disabled:cursor-default transition-transform ${
+        hinted ? "scale-105 z-20" : ""
+      }`}
       style={{ animationDelay: `${index * 35}ms` }}
     >
       <div className={`perspective h-full w-full ${wrong ? "animate-shake" : ""}`}>
@@ -61,8 +64,17 @@ function Card({ fighter, index, revealed, matched, wrong, justMatched, onClick }
         }`}
       >
         {/* Verso */}
-        <div className="backface-hidden absolute inset-0 rounded-xl shadow-[0_8px_20px_-6px_rgba(0,0,0,0.8)]">
+        <div className={`backface-hidden absolute inset-0 rounded-xl shadow-[0_8px_20px_-6px_rgba(0,0,0,0.8)] ${
+          hinted ? "ring-4 ring-soul-cyan shadow-[0_0_35px_#3ee0ff]" : ""
+        }`}>
           <CardBack />
+          {hinted && !flipped && (
+            <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center rounded-xl bg-soul-cyan/15">
+              <span className="font-display rounded-full bg-soul-cyan px-2 py-0.5 text-[11px] sm:text-xs font-black tracking-widest text-soul-ink uppercase shadow-xl animate-bounce">
+                ✦ {t("card.hint_mark")} ✦
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Frente */}

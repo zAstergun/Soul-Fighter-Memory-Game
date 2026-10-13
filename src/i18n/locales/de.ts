@@ -56,6 +56,7 @@ export const de: TranslationDictionary = {
       desc: "Wie in der Urfassung: 5 Champions, 4 Karten von jedem.",
     },
     pts_badge: "{multiplier}x PKT",
+    hints_badge: "Tipps",
   },
   play_btn: {
     ready: "KÄMPFEN!",
@@ -75,10 +76,14 @@ export const de: TranslationDictionary = {
     card4_title: "Gesamtrangliste",
     card4_tag: "Summe & Bester Rekord",
     card4_desc: "Deine beste Punktzahl jedes Modus wird in der Gesamtrangliste summiert. Jeder Account belegt nur 1 Platz pro Modus!",
+    card_hints_title: "Spirituelles Hinweissystem",
+    card_hints_tag: "Taktische Hilfe & Abzug",
+    card_hints_desc: "Kommst du nicht weiter? Drücke [H] oder klicke auf die Glühbirne, um kurzzeitig ein passendes Paar aufzudecken. Jede Schwierigkeit hat ein eigenes Kontingent und Punktabzug: Neuling (3 Tipps · -100 Pkt.), Kämpfer (2 Tipps · -200 Pkt.), Klassisch (2 Tipps · -250 Pkt.) und Legende (1 Tipp · -400 Pkt.).",
     shortcuts_title: "Tastenkombinationen:",
     shortcut_pause: "Pause",
     shortcut_audio: "Audio",
     shortcut_restart: "Neustart",
+    shortcut_hint: "[H] Tipp anfordern",
   },
   footer: {
     made_by: "Mit Leidenschaft erstellt von {author} · jetzt remastered ✨",
@@ -97,6 +102,9 @@ export const de: TranslationDictionary = {
     sound_mute: "Stumm (M)",
     restart_btn: "Neustart (R)",
     pause_btn: "Pause (P)",
+    hint_btn: "Tipp",
+    hint_tooltip: "Tipp anfordern ({remaining} übrig · -{penalty} PTS)",
+    hint_used_popup: "TIPP BENUTZT! (-{penalty} PTS)",
   },
   phases: {
     round_1: "RUNDE 1",
@@ -122,6 +130,7 @@ export const de: TranslationDictionary = {
     pairs_and_combos: "Paare + Combos",
     time_bonus: "Zeitbonus",
     life_bonus: "Lebensbonus",
+    hints_penalty: "Tipp-Punktabzug ({count})",
     total: "GESAMT",
     new_record: "🏆 Neuer Rekord! #{pos} in der Rangliste",
     menu_btn: "Menü",
@@ -192,5 +201,6 @@ export const de: TranslationDictionary = {
   card: {
     prestige: "PRESTIGE",
     face_down: "Karte {index}, verdeckt",
+    hint_mark: "TIPP",
   },
 };

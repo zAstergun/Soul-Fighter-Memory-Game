@@ -56,6 +56,7 @@ export const es: TranslationDictionary = {
       desc: "Como en la versión antigua: 5 luchadores, 4 cartas cada uno.",
     },
     pts_badge: "{multiplier}x PTS",
+    hints_badge: "Pistas",
   },
   play_btn: {
     ready: "¡A LUCHAR!",
@@ -75,10 +76,14 @@ export const es: TranslationDictionary = {
     card4_title: "Ranking General",
     card4_tag: "Suma & Récord Único",
     card4_desc: "Tu mejor puntuación de cada modo se suma en el Ranking General. Cada cuenta solo ocupa 1 puesto por modo: ¡superar tu récord sustituye la marca anterior!",
+    card_hints_title: "Sistema de Pistas Espirituales",
+    card_hints_tag: "Ayuda Táctica y Penalización",
+    card_hints_desc: "¿Te quedaste atascado? Presiona [H] o pulsa la bombilla para iluminar temporalmente un par oculto. Cada dificultad tiene su límite de pistas y penalización de puntos: Novato (3 pistas · -100 pts), Luchador (2 pistas · -200 pts), Clásico (2 pistas · -250 pts) y Leyenda (1 pista · -400 pts).",
     shortcuts_title: "Atajos Rápidos:",
     shortcut_pause: "Pausa",
     shortcut_audio: "Audio",
     shortcut_restart: "Reiniciar",
+    shortcut_hint: "[H] Pedir Pista",
   },
   footer: {
     made_by: "Hecho con dedicación por {author} · ahora remasterizado ✨",
@@ -97,6 +102,9 @@ export const es: TranslationDictionary = {
     sound_mute: "Silenciar (M)",
     restart_btn: "Reiniciar (R)",
     pause_btn: "Pausar (P)",
+    hint_btn: "Pista",
+    hint_tooltip: "Pedir Pista ({remaining} restantes · -{penalty} PTS)",
+    hint_used_popup: "¡PISTA USADA! (-{penalty} PTS)",
   },
   phases: {
     round_1: "ROUND 1",
@@ -122,6 +130,7 @@ export const es: TranslationDictionary = {
     pairs_and_combos: "Parejas + combos",
     time_bonus: "Bonus de tiempo",
     life_bonus: "Bonus de vidas",
+    hints_penalty: "Penalización por Pistas ({count})",
     total: "TOTAL",
     new_record: "🏆 ¡Nuevo récord! #{pos} en el ranking",
     menu_btn: "Menú",
@@ -192,5 +201,6 @@ export const es: TranslationDictionary = {
   card: {
     prestige: "PRESTIGIO",
     face_down: "Carta {index}, boca abajo",
+    hint_mark: "PISTA",
   },
 };

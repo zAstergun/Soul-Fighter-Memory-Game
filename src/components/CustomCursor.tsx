@@ -12,7 +12,7 @@ export default function CustomCursor() {
   const [sparks, setSparks] = useState<Spark[]>([]);
 
   const auraRef = useRef<HTMLDivElement>(null);
-  const mouseRef = useRef({ x: -100, y: -100, visible: false, hovered: false, down: false });
+  const mouseRef = useRef({ x: -100, y: -100, visible: false, hovered: false, text: false, down: false });
   const trailRef = useRef({ x: -100, y: -100 });
   const frameRef = useRef<number | null>(null);
 
@@ -30,17 +30,36 @@ export default function CustomCursor() {
 
       const target = e.target as HTMLElement | null;
       if (target) {
+        const isTextInput = Boolean(
+          (target.tagName === "INPUT" &&
+            !["button", "submit", "reset", "checkbox", "radio", "range", "file"].includes(
+              (target as HTMLInputElement).type
+            )) ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable ||
+          target.closest("input:not([type='button']):not([type='submit']):not([type='reset']):not([type='checkbox']):not([type='radio'])") ||
+          target.closest("textarea") ||
+          target.closest("[contenteditable='true']") ||
+          target.closest(".cursor-text")
+        );
+
         const isInteractive = Boolean(
           target.closest("button") ||
           target.closest("a") ||
-          target.closest("input") ||
+          target.closest("select") ||
           target.closest("[role='button']") ||
           target.closest(".cursor-pointer") ||
           target.tagName === "BUTTON" ||
           target.tagName === "A" ||
-          target.tagName === "INPUT"
+          target.tagName === "SELECT" ||
+          (target.tagName === "INPUT" &&
+            ["button", "submit", "reset", "checkbox", "radio"].includes(
+              (target as HTMLInputElement).type
+            ))
         );
-        mouseRef.current.hovered = isInteractive;
+
+        mouseRef.current.text = isTextInput;
+        mouseRef.current.hovered = !isTextInput && isInteractive;
       }
     };
 
@@ -99,7 +118,9 @@ export default function CustomCursor() {
           auraRef.current.style.opacity = "1";
           auraRef.current.style.transform = `translate3d(${trailRef.current.x}px, ${trailRef.current.y}px, 0)`;
 
-          if (mouseRef.current.hovered) {
+          if (mouseRef.current.text) {
+            auraRef.current.setAttribute("data-state", "text");
+          } else if (mouseRef.current.hovered) {
             auraRef.current.setAttribute("data-state", "hover");
           } else if (mouseRef.current.down) {
             auraRef.current.setAttribute("data-state", "down");

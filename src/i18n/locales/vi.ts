@@ -56,6 +56,7 @@ export const vi: TranslationDictionary = {
       desc: "Bản gốc hoài niệm: 5 tướng, mỗi tướng 4 lá bài.",
     },
     pts_badge: "{multiplier}x ĐIỂM",
+    hints_badge: "Gợi ý",
   },
   play_btn: {
     ready: "CHIẾN ĐẤU!",
@@ -75,10 +76,14 @@ export const vi: TranslationDictionary = {
     card4_title: "Bảng xếp hạng tổng",
     card4_tag: "Tổng điểm & Kỷ lục duy nhất",
     card4_desc: "Điểm số cao nhất của bạn ở mỗi chế độ sẽ được cộng dồn vào Bảng xếp hạng tổng. Mỗi tài khoản chỉ chiếm 1 vị trí mỗi chế độ!",
+    card_hints_title: "Hệ Thống Gợi Ý Tâm Linh",
+    card_hints_tag: "Trợ Giúp Chiến Thuật & Trừ Điểm",
+    card_hints_desc: "Bị kẹt trong trận đấu? Nhấn phím [H] hoặc bấm nút bóng đèn để tạm thời làm nổi bật một cặp thẻ ẩn. Mỗi độ khó có số lượt gợi ý và mức trừ điểm riêng: Tân Binh (3 gợi ý · -100 điểm), Đấu Sĩ (2 gợi ý · -200 điểm), Cổ Điển (2 gợi ý · -250 điểm) và Huyền Thoại (1 gợi ý · -400 điểm).",
     shortcuts_title: "Phím tắt nhanh:",
     shortcut_pause: "Tạm dừng",
     shortcut_audio: "Âm thanh",
     shortcut_restart: "Chơi lại",
+    shortcut_hint: "[H] Yêu Cầu Gợi Ý",
   },
   footer: {
     made_by: "Tạo bởi {author} · phiên bản Remastered ✨",
@@ -97,6 +102,9 @@ export const vi: TranslationDictionary = {
     sound_mute: "Tắt tiếng (M)",
     restart_btn: "Chơi lại (R)",
     pause_btn: "Tạm dừng (P)",
+    hint_btn: "Gợi ý",
+    hint_tooltip: "Dùng Gợi Ý (còn {remaining} lượt · -{penalty} PTS)",
+    hint_used_popup: "ĐÃ DÙNG GỢI Ý! (-{penalty} PTS)",
   },
   phases: {
     round_1: "HIỆP 1",
@@ -122,6 +130,7 @@ export const vi: TranslationDictionary = {
     pairs_and_combos: "Cặp bài + combo",
     time_bonus: "Thưởng thời gian",
     life_bonus: "Thưởng mạng sống",
+    hints_penalty: "Điểm trừ gợi ý ({count})",
     total: "TỔNG ĐIỂM",
     new_record: "🏆 Kỷ lục mới! Hạng #{pos} trên BXH",
     menu_btn: "Menu",
@@ -192,5 +201,6 @@ export const vi: TranslationDictionary = {
   card: {
     prestige: "HÀNG HIỆU",
     face_down: "Lá bài {index}, đang úp",
+    hint_mark: "GỢI Ý",
   },
 };

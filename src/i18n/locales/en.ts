@@ -56,6 +56,7 @@ export const en: TranslationDictionary = {
       desc: "Classic layout: 5 champions, 4 cards each.",
     },
     pts_badge: "{multiplier}x PTS",
+    hints_badge: "Hints",
   },
   play_btn: {
     ready: "FIGHT!",
@@ -75,10 +76,14 @@ export const en: TranslationDictionary = {
     card4_title: "Overall Ranking",
     card4_tag: "Sum & Single Record",
     card4_desc: "Your best score in each mode is combined on the Overall Leaderboard. Each account holds only 1 spot per mode: beating your record replaces your old score!",
+    card_hints_title: "Spiritual Hints System",
+    card_hints_tag: "Tactical Aid & Penalty",
+    card_hints_desc: "Stuck in battle? Press [H] or click the bulb button to temporarily highlight a matching pair. Each difficulty has its own hint limit and score penalty: Novice (3 hints · -100 pts), Fighter (2 hints · -200 pts), Classic (2 hints · -250 pts), and Legend (1 hint · -400 pts). Spend them wisely!",
     shortcuts_title: "Quick Shortcuts:",
     shortcut_pause: "Pause",
     shortcut_audio: "Audio",
     shortcut_restart: "Restart",
+    shortcut_hint: "[H] Request Hint",
   },
   footer: {
     made_by: "Made with passion by {author} · now remastered ✨",
@@ -97,6 +102,9 @@ export const en: TranslationDictionary = {
     sound_mute: "Mute (M)",
     restart_btn: "Restart (R)",
     pause_btn: "Pause (P)",
+    hint_btn: "Hint",
+    hint_tooltip: "Request Hint ({remaining} left · -{penalty} PTS)",
+    hint_used_popup: "HINT USED! (-{penalty} PTS)",
   },
   phases: {
     round_1: "ROUND 1",
@@ -122,6 +130,7 @@ export const en: TranslationDictionary = {
     pairs_and_combos: "Pairs + combos",
     time_bonus: "Time bonus",
     life_bonus: "Life bonus",
+    hints_penalty: "Hints Penalty ({count})",
     total: "TOTAL",
     new_record: "🏆 New record! #{pos} on leaderboard",
     menu_btn: "Menu",
@@ -192,5 +201,6 @@ export const en: TranslationDictionary = {
   card: {
     prestige: "PRESTIGE",
     face_down: "Card {index}, face down",
+    hint_mark: "HINT",
   },
 };

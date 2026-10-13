@@ -14,6 +14,8 @@ export type Result = {
   baseScore: number;
   timeBonus: number;
   lifeBonus: number;
+  hintsUsed?: number;
+  hintPenalty?: number;
   score: number;
   rank: string;
   position: number;
@@ -114,6 +116,14 @@ export default function ResultModal({ result: r, onRetry, onMenu }: Props) {
                 <Row label={t("result.pairs_and_combos")} value={r.baseScore} locale={resolvedLanguage} />
                 <Row label={t("result.time_bonus")} value={r.timeBonus} locale={resolvedLanguage} />
                 {r.lifeBonus > 0 && <Row label={t("result.life_bonus")} value={r.lifeBonus} locale={resolvedLanguage} />}
+                {(r.hintsUsed ?? 0) > 0 && (r.hintPenalty ?? 0) > 0 && (
+                  <Row
+                    label={t("result.hints_penalty", { count: r.hintsUsed ?? 0 })}
+                    value={-(r.hintPenalty ?? 0)}
+                    locale={resolvedLanguage}
+                    isNegative
+                  />
+                )}
               </div>
               <div className="mt-2 flex items-baseline justify-between border-t border-white/10 pt-2">
                 <span className="font-display text-xl tracking-widest">{t("result.total")}</span>
@@ -154,11 +164,29 @@ export default function ResultModal({ result: r, onRetry, onMenu }: Props) {
   );
 }
 
-function Row({ label, value, locale }: { label: string; value: number; locale: string }) {
+function Row({
+  label,
+  value,
+  locale,
+  isNegative = false,
+}: {
+  label: string;
+  value: number;
+  locale: string;
+  isNegative?: boolean;
+}) {
   return (
     <div className="flex justify-between">
       <span>{label}</span>
-      <span className="font-bold text-white tabular-nums">+{value.toLocaleString(locale)}</span>
+      <span
+        className={`font-bold tabular-nums ${
+          isNegative ? "text-rose-400" : "text-white"
+        }`}
+      >
+        {isNegative
+          ? `-${Math.abs(value).toLocaleString(locale)}`
+          : `+${value.toLocaleString(locale)}`}
+      </span>
     </div>
   );
 }

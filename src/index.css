@@ -80,9 +80,17 @@ body {
   }
 
   input[type="text"],
-  input:not([type="button"]):not([type="submit"]),
-  textarea {
-    cursor: text !important;
+  input[type="password"],
+  input[type="email"],
+  input[type="search"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+  textarea,
+  [contenteditable="true"],
+  .cursor-text {
+    cursor: url('/cursor-text.svg') 16 16, text !important;
   }
 
   *:disabled,
@@ -154,6 +162,50 @@ body {
   border-color: #3ee0ff;
   border-width: 3px;
   box-shadow: 0 0 16px #3ee0ff;
+}
+
+/* Modo Inserção de Texto (I-Beam Caret Reticle) */
+.sf-combat-aura[data-state="text"] {
+  width: 22px;
+  height: 38px;
+}
+.sf-combat-aura[data-state="text"] .sf-aura-ring {
+  border-color: #3ee0ff;
+  border-width: 1.5px;
+  border-radius: 6px;
+  background-color: rgba(62, 224, 255, 0.08);
+  box-shadow: 0 0 14px rgba(62, 224, 255, 0.5), inset 0 0 8px rgba(255, 61, 154, 0.25);
+  animation: aura-pulse-text 1.6s ease-in-out infinite;
+}
+.sf-combat-aura[data-state="text"] .sf-aura-brackets::before,
+.sf-combat-aura[data-state="text"] .sf-aura-brackets::after {
+  content: "";
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-color: #ffd23f;
+  border-style: solid;
+}
+.sf-combat-aura[data-state="text"] .sf-aura-brackets::before {
+  top: -1px;
+  left: -1px;
+  border-width: 1.5px 0 0 1.5px;
+}
+.sf-combat-aura[data-state="text"] .sf-aura-brackets::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 1.5px 1.5px 0;
+}
+
+@keyframes aura-pulse-text {
+  0%, 100% {
+    opacity: 0.65;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
 }
 
 @keyframes aura-spin {

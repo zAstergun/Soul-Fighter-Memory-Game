@@ -100,6 +100,7 @@ export interface TranslationDictionary {
       desc: string;
     };
     pts_badge: string;
+    hints_badge: string;
   };
   play_btn: {
     ready: string;
@@ -119,10 +120,14 @@ export interface TranslationDictionary {
     card4_title: string;
     card4_tag: string;
     card4_desc: string;
+    card_hints_title: string;
+    card_hints_tag: string;
+    card_hints_desc: string;
     shortcuts_title: string;
     shortcut_pause: string;
     shortcut_audio: string;
     shortcut_restart: string;
+    shortcut_hint: string;
   };
   footer: {
     made_by: string;
@@ -141,6 +146,9 @@ export interface TranslationDictionary {
     sound_mute: string;
     restart_btn: string;
     pause_btn: string;
+    hint_btn: string;
+    hint_tooltip: string;
+    hint_used_popup: string;
   };
   phases: {
     round_1: string;
@@ -166,6 +174,7 @@ export interface TranslationDictionary {
     pairs_and_combos: string;
     time_bonus: string;
     life_bonus: string;
+    hints_penalty: string;
     total: string;
     new_record: string;
     menu_btn: string;
@@ -236,5 +245,6 @@ export interface TranslationDictionary {
   card: {
     prestige: string;
     face_down: string;
+    hint_mark: string;
   };
 }

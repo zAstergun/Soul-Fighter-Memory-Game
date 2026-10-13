@@ -56,6 +56,7 @@ export const ko: TranslationDictionary = {
       desc: "원작 모드: 챔피언 5명, 각각 카드 4장씩.",
     },
     pts_badge: "{multiplier}x 점수",
+    hints_badge: "힌트",
   },
   play_btn: {
     ready: "전투 개시!",
@@ -75,10 +76,14 @@ export const ko: TranslationDictionary = {
     card4_title: "종합 랭킹",
     card4_tag: "합산 점수 & 단일 최고 기록",
     card4_desc: "각 모드별 최고 점수가 종합 랭킹에 합산됩니다. 계정당 각 모드에 1개의 기록만 남으며 최고 기록 달성 시 갱신됩니다!",
+    card_hints_title: "영혼의 힌트 시스템",
+    card_hints_tag: "전술 지원 및 점수 차감",
+    card_hints_desc: "막히셨나요? [H] 키를 누르거나 전구 버튼을 누르면 숨겨진 짝이 잠시 빛납니다. 난이도별로 힌트 횟수와 점수 차감이 다릅니다: 입문자 (3회 · -100점), 파이터 (2회 · -200점), 클래식 (2회 · -250점), 레전드 (1회 · -400점). 신중하게 활용하세요!",
     shortcuts_title: "단축키 안내:",
     shortcut_pause: "일시정지",
     shortcut_audio: "오디오",
     shortcut_restart: "재시작",
+    shortcut_hint: "[H] 힌트 요청",
   },
   footer: {
     made_by: "{author} 제작 · 리마스터 버전 ✨",
@@ -97,6 +102,9 @@ export const ko: TranslationDictionary = {
     sound_mute: "음소거 (M)",
     restart_btn: "다시 시작 (R)",
     pause_btn: "일시정지 (P)",
+    hint_btn: "힌트",
+    hint_tooltip: "힌트 사용 ({remaining}회 남음 · -{penalty} PTS)",
+    hint_used_popup: "힌트 사용됨! (-{penalty} PTS)",
   },
   phases: {
     round_1: "ROUND 1",
@@ -122,6 +130,7 @@ export const ko: TranslationDictionary = {
     pairs_and_combos: "짝 맞춤 + 콤보",
     time_bonus: "시간 보너스",
     life_bonus: "생명 보너스",
+    hints_penalty: "힌트 차감 ({count}회)",
     total: "총합",
     new_record: "🏆 신기록 달성! 랭킹 #{pos}",
     menu_btn: "메뉴",
@@ -192,5 +201,6 @@ export const ko: TranslationDictionary = {
   card: {
     prestige: "프레스티지",
     face_down: "카드 {index}, 뒷면",
+    hint_mark: "힌트",
   },
 };

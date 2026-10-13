@@ -56,6 +56,7 @@ export const nl: TranslationDictionary = {
       desc: "Klassieke opzet: 5 kampioenen, 4 kaarten van elk.",
     },
     pts_badge: "{multiplier}x PNT",
+    hints_badge: "Tips",
   },
   play_btn: {
     ready: "VECHTEN!",
@@ -75,10 +76,14 @@ export const nl: TranslationDictionary = {
     card4_title: "Algemene Ranglijst",
     card4_tag: "Totale Som & Enkel Record",
     card4_desc: "Je beste score per modus wordt opgeteld in het Algemeen Klassement. Elk account bezet slechts 1 plek per modus!",
+    card_hints_title: "Spiritueel Hintsysteem",
+    card_hints_tag: "Tactische Hulp & Puntenaftrek",
+    card_hints_desc: "Zit je vast in de arena? Druk op [H] of klik op de lampknop om tijdelijk een verborgen paar te verlichten. Elke moeilijkheidsgraad heeft een limiet en puntenaftrek: Beginner (3 tips · -100 ptn), Vechter (2 tips · -200 ptn), Klassiek (2 tips · -250 ptn) en Legende (1 tip · -400 ptn).",
     shortcuts_title: "Sneltoetsen:",
     shortcut_pause: "Pauze",
     shortcut_audio: "Audio",
     shortcut_restart: "Herstarten",
+    shortcut_hint: "[H] Vraag Tip",
   },
   footer: {
     made_by: "Gemaakt met toewijding door {author} · nu geremasterd ✨",
@@ -97,6 +102,9 @@ export const nl: TranslationDictionary = {
     sound_mute: "Dempen (M)",
     restart_btn: "Herstarten (R)",
     pause_btn: "Pauze (P)",
+    hint_btn: "Tip",
+    hint_tooltip: "Vraag Tip ({remaining} over · -{penalty} PTS)",
+    hint_used_popup: "TIP GEBRUIKT! (-{penalty} PTS)",
   },
   phases: {
     round_1: "RONDE 1",
@@ -122,6 +130,7 @@ export const nl: TranslationDictionary = {
     pairs_and_combos: "Paren + combo's",
     time_bonus: "Tijdbonus",
     life_bonus: "Levensbonus",
+    hints_penalty: "Aftrek voor Tips ({count})",
     total: "TOTAAL",
     new_record: "🏆 Nieuw record! #{pos} op de ranglijst",
     menu_btn: "Menu",
@@ -192,5 +201,6 @@ export const nl: TranslationDictionary = {
   card: {
     prestige: "PRESTIGE",
     face_down: "Kaart {index}, gesloten",
+    hint_mark: "TIP",
   },
 };
