@@ -52,11 +52,42 @@ body {
   -ms-overflow-style: none !important;
 }
 
-/* Custom Soul Fighter Arcade Cursor (Apenas Desktop com ponteiro fino) */
+/* =========================================================================
+   HARDWARE NATIVE CURSOR (0ms input latency, 100% fluidez natural do sistema)
+   ========================================================================= */
 @media (pointer: fine) {
-  body.custom-cursor-active,
-  body.custom-cursor-active * {
-    cursor: none !important;
+  html,
+  body,
+  #root,
+  main,
+  div,
+  p,
+  span,
+  ul,
+  li,
+  ol {
+    cursor: url('/cursor-default.svg') 2 2, auto;
+  }
+
+  button,
+  a,
+  input[type="button"],
+  input[type="submit"],
+  [role="button"],
+  .cursor-pointer,
+  label {
+    cursor: url('/cursor-pointer.svg') 2 2, pointer !important;
+  }
+
+  input[type="text"],
+  input:not([type="button"]):not([type="submit"]),
+  textarea {
+    cursor: text !important;
+  }
+
+  *:disabled,
+  button:disabled {
+    cursor: not-allowed !important;
   }
 }
 

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="bladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd23f"/>
+      <stop offset="55%" stop-color="#ff3d9a"/>
+      <stop offset="100%" stop-color="#7b2cff"/>
+    </linearGradient>
+  </defs>
+  <!-- Comic shadow -->
+  <path d="M3 3 L11 27 L15.5 17.5 L25 13 Z" fill="#120725"/>
+  <!-- Stylized Blade -->
+  <path d="M2 2 L10 25 L14.5 16 Z" fill="url(#bladeGrad)" stroke="#120725" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M2 2 L14.5 16 L24 11.5 Z" fill="#ff3d9a" stroke="#120725" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Cyan Energy core -->
+  <path d="M4 5 L13 14" stroke="#3ee0ff" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="13" cy="14" r="1.5" fill="#ffffff"/>
+</svg>
