@@ -367,22 +367,132 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
           {panel === "rank" && <Leaderboard initial="geral" />}
 
           {panel === "help" && (
-            <ul className="h-full space-y-2 text-xs text-white/80 overflow-y-auto no-scrollbar pr-1 sm:space-y-2.5 sm:text-sm">
-              {[
-                ["🃏", "Vire duas cartas por vez. Se forem o mesmo lutador, o par é seu."],
-                ["🔥", "Acertos seguidos geram COMBO e multiplicam seus pontos."],
-                ["💥", "Cada par encontrado tira vida do Shaco, o chefão da arena."],
-                ["❤️", "No modo Lenda você tem 10 vidas — cada erro custa uma."],
-                ["🏆", "Termine rápido e com poucos erros pra tirar rank S."],
-                ["✨", "Conecte sua Aster Account para garantir o selo de Verificado e foto no ranking."],
-                ["⌨️", "Atalhos: P pausa, M silencia, R reinicia."],
-              ].map(([icon, text]) => (
-                <li key={text} className="flex gap-2 rounded-lg bg-white/5 p-2 sm:gap-3 sm:rounded-xl sm:p-2.5">
-                  <span className="text-base sm:text-lg">{icon}</span>
-                  <span>{text}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="h-full flex flex-col justify-between overflow-y-auto no-scrollbar pr-1 pb-2 space-y-2.5">
+              {/* Header do Guia */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-1.5 shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-base sm:text-lg">📜</span>
+                  <span className="font-display tracking-wider text-xs sm:text-sm text-soul-gold uppercase font-bold">
+                    Regras & Sistema de Combate
+                  </span>
+                </div>
+                <span className="text-[10px] sm:text-[11px] text-white/40 font-mono">
+                  Arena v2.0
+                </span>
+              </div>
+
+              {/* Grid de Cards Temáticos */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* Card 1: Mecânica de Pares & Chefão */}
+                <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2.5 flex flex-col justify-between hover:border-soul-cyan/40 transition">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-soul-cyan/15 text-soul-cyan text-sm shadow-sm border border-soul-cyan/30">
+                      🃏
+                    </span>
+                    <div>
+                      <h4 className="font-display text-xs tracking-wide text-white font-bold">
+                        Duelo de Memória
+                      </h4>
+                      <span className="text-[9.5px] text-soul-cyan uppercase font-bold tracking-wider">
+                        Pares & Chefão Shaco
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-white/70">
+                    Vire 2 cartas por vez. Encontrar o mesmo campeão desfere um golpe direto no <strong className="text-white">Shaco</strong>, esvaziando a barra de vida dele até o K.O.!
+                  </p>
+                </div>
+
+                {/* Card 2: Sistema de Combos */}
+                <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2.5 flex flex-col justify-between hover:border-amber-400/40 transition">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-400/15 text-amber-400 text-sm shadow-sm border border-amber-400/30">
+                      🔥
+                    </span>
+                    <div>
+                      <h4 className="font-display text-xs tracking-wide text-white font-bold">
+                        Sequência Implacável
+                      </h4>
+                      <span className="text-[9.5px] text-soul-gold uppercase font-bold tracking-wider">
+                        Combos de Acerto
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-white/70">
+                    Acertos contínuos ativam <strong className="text-soul-gold">Combos (x2, x3...)</strong>. Quanto maior a sequência sem errar, mais pontos você ganha a cada par virado.
+                  </p>
+                </div>
+
+                {/* Card 3: Multiplicadores por Dificuldade */}
+                <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2.5 flex flex-col justify-between hover:border-soul-pink/40 transition">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-soul-pink/15 text-soul-pink text-sm shadow-sm border border-soul-pink/30">
+                      ⚡
+                    </span>
+                    <div>
+                      <h4 className="font-display text-xs tracking-wide text-white font-bold">
+                        Multiplicadores
+                      </h4>
+                      <span className="text-[9.5px] text-soul-pink uppercase font-bold tracking-wider">
+                        Dificuldades & Desafio
+                      </span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 text-[10px] mt-0.5">
+                    <span className="rounded bg-black/40 px-1.5 py-0.5 text-emerald-300 border border-emerald-500/20">
+                      Novato: <strong>1.0x PTS</strong>
+                    </span>
+                    <span className="rounded bg-black/40 px-1.5 py-0.5 text-soul-gold border border-soul-gold/20">
+                      Lutador: <strong>1.5x PTS</strong>
+                    </span>
+                    <span className="rounded bg-black/40 px-1.5 py-0.5 text-violet-300 border border-violet-500/20">
+                      Clássico: <strong>2.0x PTS</strong>
+                    </span>
+                    <span className="rounded bg-black/40 px-1.5 py-0.5 text-soul-pink border border-soul-pink/30 font-bold">
+                      Lenda: <strong>3.0x PTS</strong>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Card 4: Ranking Geral & Recorde Único */}
+                <div className="rounded-xl border border-white/10 bg-white/[0.04] p-2.5 flex flex-col justify-between hover:border-soul-gold/40 transition">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-soul-gold/15 text-soul-gold text-sm shadow-sm border border-soul-gold/30">
+                      👑
+                    </span>
+                    <div>
+                      <h4 className="font-display text-xs tracking-wide text-white font-bold">
+                        Ranking Geral
+                      </h4>
+                      <span className="text-[9.5px] text-soul-gold uppercase font-bold tracking-wider">
+                        Somatória & Recorde Único
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-white/70">
+                    Sua melhor pontuação de cada modo é somada no <strong className="text-white">Ranking Geral</strong>. Cada conta só ocupa <strong className="text-soul-gold">1 lugar</strong> por modo: bater seu recorde substitui a marca anterior!
+                  </p>
+                </div>
+              </div>
+
+              {/* Barra de Atalhos de Teclado no Rodapé */}
+              <div className="shrink-0 rounded-xl border border-white/10 bg-black/40 px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-white/70">
+                <span className="font-bold text-white flex items-center gap-1.5">
+                  <span>⌨️</span> Atalhos Rápidos:
+                </span>
+                <div className="flex items-center gap-3 font-mono text-[10.5px]">
+                  <span className="inline-flex items-center gap-1">
+                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-gold font-bold shadow">P</kbd> Pausar
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-cyan font-bold shadow">M</kbd> Áudio
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-pink font-bold shadow">R</kbd> Reiniciar
+                  </span>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </div>
