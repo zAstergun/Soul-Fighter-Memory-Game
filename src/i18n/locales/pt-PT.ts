@@ -48,7 +48,7 @@ export const ptPT: TranslationDictionary = {
     lenda: {
       label: "Lenda",
       tag: "12 pares · 10 vidas",
-      desc: "Inclui as skins Prestígio. Falhaste demais? K.O.",
+      desc: "Inclui as skins Prestígio. Espiadinha de 1s. Falhaste demais? K.O.",
     },
     classico: {
       label: "Clássico",

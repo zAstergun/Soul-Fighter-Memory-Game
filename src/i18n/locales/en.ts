@@ -48,7 +48,7 @@ export const en: TranslationDictionary = {
     lenda: {
       label: "Legend",
       tag: "12 pairs · 10 lives",
-      desc: "Includes Prestige skins. Too many mistakes? K.O.",
+      desc: "Includes Prestige skins. 1-second preview. Too many mistakes? K.O.",
     },
     classico: {
       label: "Classic",

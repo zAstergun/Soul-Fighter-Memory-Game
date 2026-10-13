@@ -78,7 +78,7 @@ Totalmente reconstruído com **React 19**, **TypeScript**, **Tailwind CSS 4** e 
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
 | **Novato** | 12 cartas (6 pares) | 2.0s | Ilimitadas | **1.0x** | 3 | Aquecimento ideal para aprender as regras e treinar a mente. |
 | **Lutador** | 20 cartas (10 pares) | 1.0s | Ilimitadas | **1.5x** | 2 | Todos os 10 campeões da linha Soul Fighter na arena. |
-| **Lenda** | 24 cartas (12 pares) | Nenhuma (0s) | **10 Vidas** | **3.0x** | 1 | Inclui skins Prestígio. Cada erro custa uma vida: errou demais, K.O.! |
+| **Lenda** | 24 cartas (12 pares) | 1.0s | **10 Vidas** | **3.0x** | 1 | Inclui skins Prestígio. Cada erro custa uma vida: errou demais, K.O.! |
 | **Clássico** | 20 cartas (5 lutadores × 4) | Nenhuma (0s) | Ilimitadas | **2.0x** | 2 | A nostálgica versão original: encontre as 4 cópias de cada lutador. |
 
 ---
