@@ -514,16 +514,8 @@ export default function Leaderboard({
         </ol>
       )}
 
-      {/* Legenda visual */}
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-2 text-[11px] text-white/40">
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1">
-            <VerifiedBadge className="h-3 w-3" /> {t("leaderboard.verified_aster")}
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <VipBadge className="text-[9px] px-1 py-0" /> {t("leaderboard.vip_badge")}
-          </span>
-        </div>
+      {/* Rodapé do Ranking */}
+      <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-2 text-[11px] text-white/40">
         <span>{t("leaderboard.footer_legend")}</span>
       </div>
     </div>
