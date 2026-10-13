@@ -140,8 +140,10 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
       const accuracy = s.moves ? totalMatches / s.moves : 0;
       const seconds = s.elapsed / 1000;
       const par = totalMatches * 6; // tempo "ideal"
-      const timeBonus = won ? Math.max(0, Math.round((par - seconds) * 25)) : 0;
-      const lifeBonus = won && s.lives !== null ? s.lives * 150 : 0;
+      const timeBonusRate = Math.round(25 * diff.scoreMultiplier);
+      const timeBonus = won ? Math.max(0, Math.round((par - seconds) * timeBonusRate)) : 0;
+      const lifeBonusRate = Math.round(150 * diff.scoreMultiplier);
+      const lifeBonus = won && s.lives !== null ? s.lives * lifeBonusRate : 0;
       const total = s.score + timeBonus + lifeBonus;
       const rank = getRank(accuracy);
       const date = Date.now();
@@ -207,7 +209,7 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
         // ACERTO
         s.combo += 1;
         s.maxCombo = Math.max(s.maxCombo, s.combo);
-        const gained = 100 + (s.combo - 1) * 50;
+        const gained = diff.pairBaseScore + (s.combo - 1) * diff.comboBonusStep;
         s.score += gained;
         const m = new Set(s.matched);
         m.add(a).add(b);

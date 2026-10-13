@@ -62,6 +62,10 @@ export type Difficulty = {
   previewMs: number;
   lives: number | null;
   accent: string;
+  scoreMultiplier: number;
+  pairBaseScore: number;
+  comboBonusStep: number;
+  scoreBadge: string;
 };
 
 export const DIFFICULTIES: Difficulty[] = [
@@ -76,6 +80,10 @@ export const DIFFICULTIES: Difficulty[] = [
     previewMs: 2000,
     lives: null,
     accent: "from-emerald-400 to-cyan-400",
+    scoreMultiplier: 1.0,
+    pairBaseScore: 100,
+    comboBonusStep: 50,
+    scoreBadge: "1.0x PTS",
   },
   {
     id: "lutador",
@@ -88,6 +96,10 @@ export const DIFFICULTIES: Difficulty[] = [
     previewMs: 1000,
     lives: null,
     accent: "from-soul-gold to-soul-orange",
+    scoreMultiplier: 1.5,
+    pairBaseScore: 150,
+    comboBonusStep: 75,
+    scoreBadge: "1.5x PTS",
   },
   {
     id: "lenda",
@@ -100,6 +112,10 @@ export const DIFFICULTIES: Difficulty[] = [
     previewMs: 0,
     lives: 10,
     accent: "from-soul-pink to-soul-violet",
+    scoreMultiplier: 3.0,
+    pairBaseScore: 300,
+    comboBonusStep: 150,
+    scoreBadge: "3.0x PTS",
   },
   {
     id: "classico",
@@ -112,6 +128,10 @@ export const DIFFICULTIES: Difficulty[] = [
     previewMs: 0,
     lives: null,
     accent: "from-violet-400 to-fuchsia-500",
+    scoreMultiplier: 2.0,
+    pairBaseScore: 200,
+    comboBonusStep: 100,
+    scoreBadge: "2.0x PTS",
   },
 ];
 

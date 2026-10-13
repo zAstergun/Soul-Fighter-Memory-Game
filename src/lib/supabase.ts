@@ -123,3 +123,36 @@ export async function saveScoreToDb(params: {
     return null;
   }
 }
+
+export type GeneralLeaderboardEntry = {
+  player_key: string;
+  player_name: string;
+  user_id: string | null;
+  total_score: number;
+  total_time_ms: number;
+  total_moves: number;
+  modes_played: number;
+  best_rank: string;
+  is_aster_account: boolean;
+  is_vip: boolean;
+  avatar_url: string | null;
+  channel: string | null;
+  novato_score: number;
+  lutador_score: number;
+  lenda_score: number;
+  classico_score: number;
+};
+
+export async function fetchGeneralLeaderboardFromDb(): Promise<GeneralLeaderboardEntry[]> {
+  try {
+    const { data, error } = await supabase.rpc("get_soulfighter_general_leaderboard");
+    if (error) {
+      console.warn("Erro ao buscar ranking geral do Supabase:", error);
+      return [];
+    }
+    return (data as GeneralLeaderboardEntry[]) || [];
+  } catch (err) {
+    console.error("Erro na requisição de ranking geral:", err);
+    return [];
+  }
+}

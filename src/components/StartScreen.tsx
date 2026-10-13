@@ -321,10 +321,13 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                         >
                           <div className={`absolute inset-y-0 left-0 w-1 sm:w-1.5 bg-gradient-to-b ${d.accent}`} />
                           <div className="pl-1 min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="font-display text-sm tracking-wide sm:text-base">{d.label}</span>
                               <span className="text-[9px] font-bold tracking-wide text-soul-gold uppercase sm:text-[10px]">
                                 {d.tag}
+                              </span>
+                              <span className="rounded bg-soul-pink/20 px-1 py-0.2 text-[8.5px] font-bold text-soul-pink border border-soul-pink/30 sm:text-[9.5px]">
+                                {d.scoreBadge}
                               </span>
                             </div>
                             <p className="text-[9.5px] sm:text-[10px] leading-tight text-white/60 truncate">
@@ -361,7 +364,7 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
             </form>
           )}
 
-          {panel === "rank" && <Leaderboard initial={diff} />}
+          {panel === "rank" && <Leaderboard initial="geral" />}
 
           {panel === "help" && (
             <ul className="h-full space-y-2 text-xs text-white/80 overflow-y-auto no-scrollbar pr-1 sm:space-y-2.5 sm:text-sm">
