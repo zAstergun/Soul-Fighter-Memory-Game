@@ -1,24 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Background from "./components/Background";
 import Game from "./components/Game";
 import StartScreen from "./components/StartScreen";
 import type { DifficultyId } from "./data/fighters";
-import { setPlayerName } from "./lib/storage";
-import { AuthProvider } from "./context/AuthContext";
+import { getPlayerName, setPlayerName } from "./lib/storage";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { startPresenceHeartbeat, sendPresencePing } from "./lib/presence";
 
 type Screen = { name: "menu" } | { name: "game"; player: string; diff: DifficultyId; key: number };
 
 function MainContent() {
+  const { user, profile } = useAuth();
   const [screen, setScreen] = useState<Screen>({ name: "menu" });
   const [lastDiff, setLastDiff] = useState<DifficultyId>(
     () => (localStorage.getItem("sf-diff") as DifficultyId) || "lutador"
   );
+
+  // Conexão de Presença em Tempo Real com o CRM Aster
+  useEffect(() => {
+    const cleanup = startPresenceHeartbeat(() => ({
+      currentPath: screen.name === "menu" ? "/arena/menu" : `/arena/batalha/${screen.diff}`,
+      playerName: screen.name === "game" ? screen.player : getPlayerName() || "Lutador",
+      user,
+      profile,
+    }));
+
+    return cleanup;
+  }, [screen, user, profile]);
 
   const start = (player: string, diff: DifficultyId) => {
     setPlayerName(player);
     localStorage.setItem("sf-diff", diff);
     setLastDiff(diff);
     setScreen({ name: "game", player, diff, key: Date.now() });
+
+    // Notifica o CRM da transição para a batalha imediatamente
+    sendPresencePing({
+      currentPath: `/arena/batalha/${diff}`,
+      playerName: player,
+      user,
+      profile,
+    });
   };
 
   return (
