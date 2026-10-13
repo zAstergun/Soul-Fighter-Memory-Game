@@ -91,6 +91,80 @@ body {
   }
 }
 
+/* =========================================================================
+   AURA ESPIRITUAL & MIRA DE COMBATE (SOUL FIGHTER RETICLE)
+   ========================================================================= */
+.sf-combat-aura {
+  width: 32px;
+  height: 32px;
+  transition: width 0.22s ease-out, height 0.22s ease-out;
+}
+
+.sf-aura-ring {
+  width: 100%;
+  height: 100%;
+  border-color: rgba(255, 210, 63, 0.65);
+  border-width: 2px;
+  box-shadow: 0 0 12px rgba(255, 210, 63, 0.4), inset 0 0 8px rgba(255, 61, 154, 0.2);
+  transition: all 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+/* Modo Alvo / Hover sobre Botões e Cartas */
+.sf-combat-aura[data-state="hover"] {
+  width: 48px;
+  height: 48px;
+}
+
+.sf-combat-aura[data-state="hover"] .sf-aura-ring {
+  border-color: #ff3d9a;
+  border-style: dashed;
+  border-width: 2px;
+  background-color: rgba(255, 61, 154, 0.12);
+  box-shadow: 0 0 20px rgba(255, 61, 154, 0.7), inset 0 0 12px rgba(62, 224, 255, 0.3);
+  animation: aura-spin 8s linear infinite;
+}
+
+/* Miras de Alvo / Brackets nos cantos */
+.sf-combat-aura[data-state="hover"] .sf-aura-brackets::before,
+.sf-combat-aura[data-state="hover"] .sf-aura-brackets::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-color: #ffd23f;
+  border-style: solid;
+}
+.sf-combat-aura[data-state="hover"] .sf-aura-brackets::before {
+  top: -2px;
+  left: -2px;
+  border-width: 2px 0 0 2px;
+}
+.sf-combat-aura[data-state="hover"] .sf-aura-brackets::after {
+  bottom: -2px;
+  right: -2px;
+  border-width: 0 2px 2px 0;
+}
+
+/* Estado de Clique (Down) */
+.sf-combat-aura[data-state="down"] {
+  width: 24px;
+  height: 24px;
+}
+.sf-combat-aura[data-state="down"] .sf-aura-ring {
+  border-color: #3ee0ff;
+  border-width: 3px;
+  box-shadow: 0 0 16px #3ee0ff;
+}
+
+@keyframes aura-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ---------- 3D card flip ---------- */
 .perspective {
   perspective: 1000px;
