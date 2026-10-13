@@ -159,6 +159,7 @@ export const id: TranslationDictionary = {
     verified_aster: "Terverifikasi ASTER",
     vip_badge: "VIP",
     footer_legend: "Petarung terbaik di arena",
+    you_badge: "KAMU",
   },
   auth: {
     badge: "✨ Jaringan ASTER",

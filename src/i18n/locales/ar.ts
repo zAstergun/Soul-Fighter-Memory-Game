@@ -159,6 +159,7 @@ export const ar: TranslationDictionary = {
     verified_aster: "موثق ASTER",
     vip_badge: "VIP",
     footer_legend: "أفضل مقاتلي الحلبة",
+    you_badge: "أنت",
   },
   auth: {
     badge: "✨ شبكة ASTER",

@@ -203,6 +203,7 @@ export interface TranslationDictionary {
     verified_aster: string;
     vip_badge: string;
     footer_legend: string;
+    you_badge: string;
   };
   auth: {
     badge: string;

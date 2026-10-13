@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { DIFFICULTIES, type DifficultyId } from "../data/fighters";
-import { loadBoard } from "../lib/storage";
+import { getPlayerName, loadBoard } from "../lib/storage";
 import {
   fetchGeneralLeaderboardFromDb,
   fetchLeaderboardFromDb,
@@ -36,9 +36,11 @@ type LeaderItem = {
 export default function Leaderboard({
   initial = "geral",
   highlightDate,
+  currentPlayerName,
 }: {
   initial?: LeaderboardTab;
   highlightDate?: number;
+  currentPlayerName?: string;
 }) {
   const { t, resolvedLanguage } = useI18n();
   const [tab, setTab] = useState<LeaderboardTab>(initial);
@@ -72,6 +74,59 @@ export default function Leaderboard({
               lendaScore: d.lenda_score,
               classicoScore: d.classico_score,
             }));
+
+            // Sincroniza dados locais do jogador atual se ainda não refletidos no banco geral
+            const effectivePlayer = (currentPlayerName || getPlayerName()).toLowerCase().trim();
+            if (effectivePlayer) {
+              const allLocal = loadBoard();
+              let localTotal = 0;
+              let localTime = 0;
+              let localMoves = 0;
+              let localModes = 0;
+              let bestR = "S";
+              const sMap: Record<DifficultyId, number> = { novato: 0, lutador: 0, lenda: 0, classico: 0 };
+              (Object.keys(allLocal) as DifficultyId[]).forEach((dk) => {
+                const found = (allLocal[dk] || []).find((x) => x.name.toLowerCase().trim() === effectivePlayer);
+                if (found) {
+                  sMap[dk] = found.score;
+                  localTotal += found.score;
+                  localTime += found.timeMs;
+                  localMoves += found.moves;
+                  localModes += 1;
+                  bestR = found.rank;
+                }
+              });
+
+              if (localModes > 0) {
+                const exIdx = mapped.findIndex((m) => m.name.toLowerCase().trim() === effectivePlayer);
+                if (exIdx === -1) {
+                  mapped.push({
+                    id: `local-sync-${effectivePlayer}`,
+                    name: currentPlayerName || getPlayerName() || "Guerreiro",
+                    score: localTotal,
+                    timeMs: localTime,
+                    moves: localMoves,
+                    rank: bestR,
+                    isAsterAccount: false,
+                    isVip: false,
+                    isGeneral: true,
+                    modesPlayed: localModes,
+                    novatoScore: sMap.novato,
+                    lutadorScore: sMap.lutador,
+                    lendaScore: sMap.lenda,
+                    classicoScore: sMap.classico,
+                  });
+                  mapped.sort((a, b) => b.score - a.score || a.timeMs - b.timeMs);
+                } else if (localTotal > mapped[exIdx].score) {
+                  mapped[exIdx].score = localTotal;
+                  mapped[exIdx].timeMs = localTime;
+                  mapped[exIdx].moves = localMoves;
+                  mapped[exIdx].modesPlayed = Math.max(mapped[exIdx].modesPlayed || 0, localModes);
+                  mapped.sort((a, b) => b.score - a.score || a.timeMs - b.timeMs);
+                }
+              }
+            }
+
             setOnlineList(mapped);
           } else {
             // Fallback: calcular somatória a partir do armazenamento local
@@ -144,7 +199,25 @@ export default function Leaderboard({
         .then((data: SupabaseLeaderboardEntry[]) => {
           if (!active) return;
           if (data && data.length > 0) {
-            const mapped: LeaderItem[] = data.map((d) => ({
+            // Deduplica por player (user_id se houver, ou nome normalizado) mantendo o melhor score
+            const seen = new Map<string, SupabaseLeaderboardEntry>();
+            for (const d of data) {
+              const key = d.user_id ? `u:${d.user_id}` : `n:${d.player_name.toLowerCase().trim()}`;
+              const existing = seen.get(key);
+              if (
+                !existing ||
+                d.score > existing.score ||
+                (d.score === existing.score && d.time_ms < existing.time_ms)
+              ) {
+                seen.set(key, d);
+              }
+            }
+
+            const deduplicated = Array.from(seen.values()).sort(
+              (a, b) => b.score - a.score || a.time_ms - b.time_ms
+            );
+
+            const mapped: LeaderItem[] = deduplicated.map((d) => ({
               id: d.id,
               name: d.player_name,
               score: d.score,
@@ -157,6 +230,37 @@ export default function Leaderboard({
               channel: d.profiles?.channel,
               isGeneral: false,
             }));
+
+            // Sincroniza registro local do jogador atual se ainda não refletido no banco
+            const effectivePlayer = (currentPlayerName || getPlayerName()).toLowerCase().trim();
+            if (effectivePlayer) {
+              const localList = loadBoard()[tab] ?? [];
+              const myLocal = localList.find((l) => l.name.toLowerCase().trim() === effectivePlayer);
+              if (myLocal) {
+                const exIdx = mapped.findIndex((m) => m.name.toLowerCase().trim() === effectivePlayer);
+                if (exIdx === -1) {
+                  mapped.push({
+                    id: String(myLocal.date),
+                    name: myLocal.name,
+                    score: myLocal.score,
+                    timeMs: myLocal.timeMs,
+                    moves: myLocal.moves,
+                    rank: myLocal.rank,
+                    isAsterAccount: false,
+                    isVip: false,
+                    isGeneral: false,
+                  });
+                  mapped.sort((a, b) => b.score - a.score || a.timeMs - b.timeMs);
+                } else if (myLocal.score > mapped[exIdx].score) {
+                  mapped[exIdx].score = myLocal.score;
+                  mapped[exIdx].timeMs = myLocal.timeMs;
+                  mapped[exIdx].moves = myLocal.moves;
+                  mapped[exIdx].rank = myLocal.rank;
+                  mapped.sort((a, b) => b.score - a.score || a.timeMs - b.timeMs);
+                }
+              }
+            }
+
             setOnlineList(mapped);
           } else {
             // Fallback to local storage if no database records yet
@@ -200,7 +304,7 @@ export default function Leaderboard({
     return () => {
       active = false;
     };
-  }, [tab]);
+  }, [tab, currentPlayerName]);
 
   const activeDiff = tab !== "geral" ? DIFFICULTIES.find((d) => d.id === tab) : null;
 
@@ -280,116 +384,133 @@ export default function Leaderboard({
         </div>
       ) : (
         <ol className="flex-1 min-h-0 space-y-1.5 overflow-y-auto no-scrollbar pr-1">
-          {onlineList.map((e, i) => (
-            <li
-              key={e.id}
-              className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition ${
-                highlightDate && String(highlightDate) === e.id
-                  ? "bg-soul-gold/25 ring-2 ring-soul-gold"
-                  : i === 0
-                  ? "bg-gradient-to-r from-amber-500/20 via-soul-gold/15 to-transparent border border-soul-gold/30"
-                  : i === 1
-                  ? "bg-gradient-to-r from-slate-400/15 via-white/10 to-transparent border border-white/20"
-                  : i === 2
-                  ? "bg-gradient-to-r from-amber-700/20 via-orange-600/10 to-transparent border border-orange-500/20"
-                  : "bg-white/5 hover:bg-white/10"
-              }`}
-            >
-              {/* Posição */}
-              <span
-                className={`font-display w-6 shrink-0 text-xl text-center ${
-                  i === 0
-                    ? "text-soul-gold"
+          {onlineList.map((e, i) => {
+            const isCurrentPlayer = Boolean(
+              (highlightDate && String(highlightDate) === e.id) ||
+              (currentPlayerName && e.name.toLowerCase().trim() === currentPlayerName.toLowerCase().trim()) ||
+              (!currentPlayerName && getPlayerName() && e.name.toLowerCase().trim() === getPlayerName().toLowerCase().trim())
+            );
+
+            return (
+              <li
+                key={e.id}
+                className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition ${
+                  isCurrentPlayer
+                    ? "bg-gradient-to-r from-soul-gold/30 via-amber-400/20 to-soul-gold/15 border border-soul-gold ring-1 ring-soul-gold shadow-[0_0_16px_rgba(255,210,63,0.35)]"
+                    : i === 0
+                    ? "bg-gradient-to-r from-amber-500/20 via-soul-gold/15 to-transparent border border-soul-gold/30"
                     : i === 1
-                    ? "text-slate-300"
+                    ? "bg-gradient-to-r from-slate-400/15 via-white/10 to-transparent border border-white/20"
                     : i === 2
-                    ? "text-amber-500"
-                    : "text-white/40"
+                    ? "bg-gradient-to-r from-amber-700/20 via-orange-600/10 to-transparent border border-orange-500/20"
+                    : "bg-white/5 hover:bg-white/10"
                 }`}
               >
-                {i + 1}
-              </span>
+                {/* Posição */}
+                <span
+                  className={`font-display w-6 shrink-0 text-xl text-center ${
+                    isCurrentPlayer
+                      ? "text-soul-gold font-black"
+                      : i === 0
+                      ? "text-soul-gold"
+                      : i === 1
+                      ? "text-slate-300"
+                      : i === 2
+                      ? "text-amber-500"
+                      : "text-white/40"
+                  }`}
+                >
+                  {i + 1}
+                </span>
 
-              {/* Rank Tier (S, A, etc) */}
-              <span
-                className="font-display flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-base text-soul-ink font-bold shadow-sm"
-                style={{ background: RANK_STYLE[e.rank]?.color || "#ffd23f" }}
-              >
-                {e.rank}
-              </span>
+                {/* Rank Tier (S, A, etc) */}
+                <span
+                  className="font-display flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-base text-soul-ink font-bold shadow-sm"
+                  style={{ background: RANK_STYLE[e.rank]?.color || "#ffd23f" }}
+                >
+                  {e.rank}
+                </span>
 
-              {/* Foto de Perfil (Apenas para quem tiver Aster Account) */}
-              {e.isAsterAccount && (
-                <PlayerAvatar
-                  profile={{
-                    id: e.id,
-                    full_name: e.name,
-                    channel: e.channel || null,
-                    avatar_url: e.avatarUrl || null,
-                    is_vip: e.isVip,
-                  }}
-                  name={e.name}
-                  size="sm"
-                />
-              )}
+                {/* Foto de Perfil (Apenas para quem tiver Aster Account) */}
+                {e.isAsterAccount && (
+                  <PlayerAvatar
+                    profile={{
+                      id: e.id,
+                      full_name: e.name,
+                      channel: e.channel || null,
+                      avatar_url: e.avatarUrl || null,
+                      is_vip: e.isVip,
+                    }}
+                    name={e.name}
+                    size="sm"
+                  />
+                )}
 
-              {/* Informações do Jogador */}
-              <div className="min-w-0 flex-1 flex flex-col justify-center">
-                <div className="flex items-center gap-1.5">
-                  <span className="truncate font-bold text-white tracking-wide">
-                    {e.name}
-                  </span>
+                {/* Informações do Jogador */}
+                <div className="min-w-0 flex-1 flex flex-col justify-center">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="truncate font-bold text-white tracking-wide">
+                      {e.name}
+                    </span>
 
-                  {/* Badges de Aster Account */}
-                  {e.isAsterAccount && (
-                    <div className="flex items-center gap-1 shrink-0">
-                      <VerifiedBadge className="h-3.5 w-3.5" />
-                      {e.isVip && <VipBadge className="text-[10px] px-1 py-0" />}
+                    {/* Selo VOCÊ para o jogador atual */}
+                    {isCurrentPlayer && (
+                      <span className="rounded bg-soul-gold text-soul-ink font-black text-[9px] px-1.5 py-0.2 tracking-wider uppercase shrink-0 shadow-sm">
+                        {t("leaderboard.you_badge")}
+                      </span>
+                    )}
+
+                    {/* Badges de Aster Account */}
+                    {e.isAsterAccount && (
+                      <div className="flex items-center gap-1 shrink-0">
+                        <VerifiedBadge className="h-3.5 w-3.5" />
+                        {e.isVip && <VipBadge className="text-[10px] px-1 py-0" />}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Sub-linha para o ranking geral detalhando modos */}
+                  {e.isGeneral && (
+                    <div className="flex items-center gap-1 mt-0.5 text-[10px] text-white/50 flex-wrap">
+                      <span className="rounded bg-soul-gold/15 text-soul-gold px-1 font-bold">
+                        {t("leaderboard.modes_count", { count: e.modesPlayed || 0 })}
+                      </span>
+                      <span className="hidden md:inline text-white/30">|</span>
+                      <div className="hidden md:flex items-center gap-1.5 font-mono text-[9.5px]">
+                        {Boolean(e.novatoScore) && (
+                          <span className="text-emerald-400">{t("diff.novato.label").slice(0, 3)}: {e.novatoScore?.toLocaleString(resolvedLanguage)}</span>
+                        )}
+                        {Boolean(e.lutadorScore) && (
+                          <span className="text-amber-300">{t("diff.lutador.label").slice(0, 3)}: {e.lutadorScore?.toLocaleString(resolvedLanguage)}</span>
+                        )}
+                        {Boolean(e.lendaScore) && (
+                          <span className="text-soul-pink">{t("diff.lenda.label").slice(0, 3)}: {e.lendaScore?.toLocaleString(resolvedLanguage)}</span>
+                        )}
+                        {Boolean(e.classicoScore) && (
+                          <span className="text-violet-300">{t("diff.classico.label").slice(0, 3)}: {e.classicoScore?.toLocaleString(resolvedLanguage)}</span>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
 
-                {/* Sub-linha para o ranking geral detalhando modos */}
-                {e.isGeneral && (
-                  <div className="flex items-center gap-1 mt-0.5 text-[10px] text-white/50 flex-wrap">
-                    <span className="rounded bg-soul-gold/15 text-soul-gold px-1 font-bold">
-                      {t("leaderboard.modes_count", { count: e.modesPlayed || 0 })}
-                    </span>
-                    <span className="hidden md:inline text-white/30">|</span>
-                    <div className="hidden md:flex items-center gap-1.5 font-mono text-[9.5px]">
-                      {Boolean(e.novatoScore) && (
-                        <span className="text-emerald-400">{t("diff.novato.label").slice(0, 3)}: {e.novatoScore?.toLocaleString(resolvedLanguage)}</span>
-                      )}
-                      {Boolean(e.lutadorScore) && (
-                        <span className="text-amber-300">{t("diff.lutador.label").slice(0, 3)}: {e.lutadorScore?.toLocaleString(resolvedLanguage)}</span>
-                      )}
-                      {Boolean(e.lendaScore) && (
-                        <span className="text-soul-pink">{t("diff.lenda.label").slice(0, 3)}: {e.lendaScore?.toLocaleString(resolvedLanguage)}</span>
-                      )}
-                      {Boolean(e.classicoScore) && (
-                        <span className="text-violet-300">{t("diff.classico.label").slice(0, 3)}: {e.classicoScore?.toLocaleString(resolvedLanguage)}</span>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Estatísticas */}
-              <span className="hidden text-xs text-white/50 sm:inline shrink-0">
-                {formatTime(e.timeMs)}
-              </span>
-              <span className="hidden text-xs text-white/40 sm:inline shrink-0">
-                {t("leaderboard.moves_suffix", { count: e.moves })}
-              </span>
-              <span className={`font-display text-lg tracking-wide shrink-0 font-bold ${
-                e.isGeneral
-                  ? "bg-gradient-to-r from-soul-gold to-soul-pink bg-clip-text text-transparent"
-                  : "text-soul-pink"
-              }`}>
-                {e.score.toLocaleString(resolvedLanguage)}
-              </span>
-            </li>
-          ))}
+                {/* Estatísticas */}
+                <span className="hidden text-xs text-white/50 sm:inline shrink-0">
+                  {formatTime(e.timeMs)}
+                </span>
+                <span className="hidden text-xs text-white/40 sm:inline shrink-0">
+                  {t("leaderboard.moves_suffix", { count: e.moves })}
+                </span>
+                <span className={`font-display text-lg tracking-wide shrink-0 font-bold ${
+                  e.isGeneral
+                    ? "bg-gradient-to-r from-soul-gold to-soul-pink bg-clip-text text-transparent"
+                    : "text-soul-pink"
+                }`}>
+                  {e.score.toLocaleString(resolvedLanguage)}
+                </span>
+              </li>
+            );
+          })}
         </ol>
       )}
 

@@ -139,7 +139,11 @@ export default function ResultModal({ result: r, onRetry, onMenu }: Props) {
 
           {r.won && stage >= 2 && (
             <div className="mt-4">
-              <Leaderboard initial={r.difficulty} highlightDate={r.date} />
+              <Leaderboard
+                initial={r.difficulty}
+                highlightDate={r.date}
+                currentPlayerName={r.name}
+              />
             </div>
           )}
 

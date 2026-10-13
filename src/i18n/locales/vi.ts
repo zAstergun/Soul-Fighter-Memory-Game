@@ -159,6 +159,7 @@ export const vi: TranslationDictionary = {
     verified_aster: "Đã xác minh ASTER",
     vip_badge: "VIP",
     footer_legend: "Những chiến binh xuất sắc nhất đấu trường",
+    you_badge: "BẠN",
   },
   auth: {
     badge: "✨ Mạng lưới ASTER",

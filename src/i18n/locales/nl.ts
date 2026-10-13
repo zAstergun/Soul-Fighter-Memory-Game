@@ -159,6 +159,7 @@ export const nl: TranslationDictionary = {
     verified_aster: "Geverifieerd ASTER",
     vip_badge: "VIP",
     footer_legend: "Beste krijgers van de arena",
+    you_badge: "JIJ",
   },
   auth: {
     badge: "✨ ASTER Netwerk",

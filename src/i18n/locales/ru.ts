@@ -159,6 +159,7 @@ export const ru: TranslationDictionary = {
     verified_aster: "Проверено ASTER",
     vip_badge: "VIP",
     footer_legend: "Лучшие бойцы арены",
+    you_badge: "ВЫ",
   },
   auth: {
     badge: "✨ Сеть ASTER",

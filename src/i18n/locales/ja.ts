@@ -159,6 +159,7 @@ export const ja: TranslationDictionary = {
     verified_aster: "ASTER認証済み",
     vip_badge: "VIP",
     footer_legend: "アリーナの猛者たち",
+    you_badge: "あなた",
   },
   auth: {
     badge: "✨ ASTER ネットワーク",

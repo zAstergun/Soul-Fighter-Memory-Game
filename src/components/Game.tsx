@@ -46,7 +46,7 @@ const buildDeck = (diffId: DifficultyId): Fighter[] => {
 
 export default function Game({ playerName, difficulty, onRestart, onExit }: Props) {
   const { t } = useI18n();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const diff = getDifficulty(difficulty);
   const [deck] = useState(() => buildDeck(difficulty));
   const totalMatches = deck.length / 2;
@@ -155,19 +155,20 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
       const lifeBonusRate = Math.round(150 * diff.scoreMultiplier);
       const lifeBonus = won && s.lives !== null ? s.lives * lifeBonusRate : 0;
       const hintPenalty = s.hintsUsed * diff.hintPenalty;
-      const total = Math.max(0, s.score + timeBonus + lifeBonus - hintPenalty);
+      const total = Math.max(0, Math.round(s.score + timeBonus + lifeBonus - hintPenalty));
+      const roundedTimeMs = Math.max(0, Math.round(s.elapsed));
       const rank = getRank(accuracy);
       const date = Date.now();
       const position = won
-        ? saveScore(difficulty, { name: playerName, score: total, timeMs: s.elapsed, moves: s.moves, rank, date })
+        ? saveScore(difficulty, { name: playerName, score: total, timeMs: roundedTimeMs, moves: s.moves, rank, date })
         : -1;
       if (won) {
         saveScoreToDb({
           playerName,
-          userId: user?.id,
+          userId: profile ? user?.id : null,
           difficulty,
           score: total,
-          timeMs: s.elapsed,
+          timeMs: roundedTimeMs,
           moves: s.moves,
           rank,
         });
@@ -180,7 +181,7 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
           setResult({
             won,
             name: playerName,
-            timeMs: s.elapsed,
+            timeMs: roundedTimeMs,
             moves: s.moves,
             accuracy,
             maxCombo: s.maxCombo,
@@ -198,7 +199,7 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
         won ? 700 : 500
       );
     },
-    [difficulty, playerName, totalMatches]
+    [difficulty, playerName, totalMatches, diff, user, profile]
   );
 
   const triggerHint = useCallback(() => {

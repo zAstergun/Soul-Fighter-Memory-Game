@@ -18,4 +18,6 @@ Thumbs.db
 
 # Test & tooling artifacts
 .playwright-mcp/
+supabase/
+.temp/
 

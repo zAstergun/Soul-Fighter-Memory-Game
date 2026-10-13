@@ -95,27 +95,78 @@ export async function saveScoreToDb(params: {
   moves: number;
   rank: string;
 }): Promise<SupabaseLeaderboardEntry | null> {
+  const cleanPlayerName = params.playerName?.trim() || "Guerreiro";
+  const cleanScore = Math.max(0, Math.round(Number(params.score) || 0));
+  const cleanTimeMs = Math.max(0, Math.round(Number(params.timeMs) || 0));
+  const cleanMoves = Math.max(0, Math.round(Number(params.moves) || 0));
+  const cleanRank = params.rank?.trim() || "S";
+  const targetUserId = params.userId || null;
+
   try {
     const { data, error } = await supabase.rpc("upsert_soulfighter_score", {
-      p_player_name: params.playerName?.trim() || "Guerreiro",
-      p_user_id: params.userId || null,
+      p_player_name: cleanPlayerName,
+      p_user_id: targetUserId,
       p_difficulty: params.difficulty,
-      p_score: params.score,
-      p_time_ms: params.timeMs,
-      p_moves: params.moves,
-      p_rank: params.rank,
+      p_score: cleanScore,
+      p_time_ms: cleanTimeMs,
+      p_moves: cleanMoves,
+      p_rank: cleanRank,
     });
 
-    if (error) {
-      console.warn("Erro ao salvar pontuação no Supabase:", error);
-      return null;
+    if (!error && data) {
+      return data as unknown as SupabaseLeaderboardEntry;
     }
 
-    return data as unknown as SupabaseLeaderboardEntry;
+    if (error) {
+      console.warn("RPC upsert_soulfighter_score retornou erro:", error.message, error.code);
+      // Se falhou por violação de foreign key do user_id (ex: perfil ausente em public.profiles)
+      if (error.code === "23503" && targetUserId) {
+        console.warn("Retentando salvar score como convidado devido a foreign key inexistente...");
+        const retryRes = await supabase.rpc("upsert_soulfighter_score", {
+          p_player_name: cleanPlayerName,
+          p_user_id: null,
+          p_difficulty: params.difficulty,
+          p_score: cleanScore,
+          p_time_ms: cleanTimeMs,
+          p_moves: cleanMoves,
+          p_rank: cleanRank,
+        });
+        if (!retryRes.error && retryRes.data) {
+          return retryRes.data as unknown as SupabaseLeaderboardEntry;
+        }
+      }
+    }
   } catch (err) {
-    console.error("Falha ao salvar score no Supabase:", err);
-    return null;
+    console.error("Falha ao chamar RPC upsert_soulfighter_score:", err);
   }
+
+  // Fallback de contingência: inserção direta na tabela soulfighter_ranking
+  try {
+    console.warn("Tentando fallback de inserção direta no soulfighter_ranking...");
+    const payload = {
+      player_name: cleanPlayerName,
+      user_id: targetUserId,
+      difficulty: params.difficulty,
+      score: cleanScore,
+      time_ms: cleanTimeMs,
+      moves: cleanMoves,
+      rank: cleanRank,
+    };
+
+    let insertRes = await supabase.from("soulfighter_ranking").insert(payload).select().single();
+    if (insertRes.error && insertRes.error.code === "23503" && targetUserId) {
+      payload.user_id = null;
+      insertRes = await supabase.from("soulfighter_ranking").insert(payload).select().single();
+    }
+
+    if (!insertRes.error && insertRes.data) {
+      return insertRes.data as unknown as SupabaseLeaderboardEntry;
+    }
+  } catch (fallbackErr) {
+    console.error("Falha fatal no fallback de pontuação:", fallbackErr);
+  }
+
+  return null;
 }
 
 export type GeneralLeaderboardEntry = {

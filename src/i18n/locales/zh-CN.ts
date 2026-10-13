@@ -159,6 +159,7 @@ export const zhCN: TranslationDictionary = {
     verified_aster: "ASTER 官方认证",
     vip_badge: "VIP",
     footer_legend: "竞技场顶尖勇士榜",
+    you_badge: "你",
   },
   auth: {
     badge: "✨ ASTER 网络",

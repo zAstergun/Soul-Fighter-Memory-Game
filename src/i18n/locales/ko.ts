@@ -159,6 +159,7 @@ export const ko: TranslationDictionary = {
     verified_aster: "ASTER 인증",
     vip_badge: "VIP",
     footer_legend: "아레나 최강의 전사들",
+    you_badge: "나",
   },
   auth: {
     badge: "✨ ASTER 네트워크",
