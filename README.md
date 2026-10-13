@@ -42,20 +42,19 @@ Totalmente reconstruído com **React 19**, **TypeScript**, **Tailwind CSS 4** e 
 
 ### ⚔️ Partida em Ação & Finalização
 <div align="center">
-  <img src="./public/images/Ilustrado1.png" alt="Tabuleiro e Gameplay em Ação" width="48%" />
-  <img src="./public/images/Ilustrado2.png" alt="Tela de Combates e Vitória" width="48%" />
+  <img src="./public/images/preview-gameplay.png" alt="Tabuleiro e Gameplay em Ação" width="48%" />
+  <img src="./public/images/preview-victory.png" alt="Tela de Vitória e Classificação Rank S" width="48%" />
 </div>
 
 <br/>
 
-### 🃏 Cartas Oficiais dos Lutadores
+### 🃏 Elenco Oficial dos Campeões Soul Fighter
 <div align="center">
-  <img src="./public/images/Gwen_Soul_Fighter_Card.png" alt="Gwen Soul Fighter" width="15%" />
-  <img src="./public/images/Samira_Soul_Fighter_Card.png" alt="Samira Soul Fighter" width="15%" />
-  <img src="./public/images/Viego_Soul_Fighter_Card.png" alt="Viego Soul Fighter" width="15%" />
-  <img src="./public/images/Shaco_Soul_Fighter_Card.png" alt="Shaco Soul Fighter" width="15%" />
-  <img src="./public/images/Nidalee_Soul_Fighter_Card.png" alt="Nidalee Soul Fighter" width="15%" />
-  <img src="./public/images/Neeko_e_Nidalee_Soul_Fighter_Card.png" alt="Neeko e Nidalee Soul Fighter" width="15%" />
+  <img src="./public/images/preview-roster.png" alt="Elenco Oficial de Campeões Soul Fighter" width="100%" />
+</div>
+
+<div align="center">
+  <sub><strong>Gwen</strong> • <strong>Samira</strong> • <strong>Viego</strong> • <strong>Sett</strong> • <strong>Lux</strong> • <strong>Jhin</strong> • <strong>Evelynn</strong> • <strong>Pyke</strong> • <strong>Shaco</strong> • <strong>Naafiri</strong></sub>
 </div>
 
 ---
