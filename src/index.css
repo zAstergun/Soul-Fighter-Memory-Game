@@ -52,6 +52,14 @@ body {
   -ms-overflow-style: none !important;
 }
 
+/* Custom Soul Fighter Arcade Cursor (Apenas Desktop com ponteiro fino) */
+@media (pointer: fine) {
+  body.custom-cursor-active,
+  body.custom-cursor-active * {
+    cursor: none !important;
+  }
+}
+
 /* ---------- 3D card flip ---------- */
 .perspective {
   perspective: 1000px;

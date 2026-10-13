@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Background from "./components/Background";
 import Game from "./components/Game";
 import StartScreen from "./components/StartScreen";
+import CustomCursor from "./components/CustomCursor";
 import type { DifficultyId } from "./data/fighters";
 import { getPlayerName, setPlayerName } from "./lib/storage";
 import { AuthProvider, useAuth } from "./context/AuthContext";
@@ -45,6 +46,7 @@ function MainContent() {
 
   return (
     <main className="relative h-dvh max-h-dvh w-full overflow-hidden select-none">
+      <CustomCursor />
       <Background dim={screen.name === "game"} />
       {screen.name === "menu" ? (
         <StartScreen onStart={start} initialDiff={lastDiff} />
