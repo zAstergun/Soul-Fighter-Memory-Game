@@ -1,5 +1,6 @@
 import { FIGHTERS, loadingArt } from "../data/fighters";
 import { formatTime } from "../lib/utils";
+import { useI18n } from "../i18n";
 
 type Props = {
   playerName: string;
@@ -38,6 +39,7 @@ function Portrait({ src, side, color }: { src: string; side: "l" | "r"; color: s
 }
 
 export default function Hud(p: Props) {
+  const { t, resolvedLanguage } = useI18n();
   const lifePct = p.lives !== null && p.maxLives ? p.lives / p.maxLives : null;
   const comboPct = Math.min(p.combo / 5, 1);
 
@@ -76,7 +78,7 @@ export default function Hud(p: Props) {
                   <span className="text-red-400">♥</span> {p.lives}/{p.maxLives}
                 </span>
               ) : (
-                <span className="hidden sm:inline">Alma</span>
+                <span className="hidden sm:inline">{t("hud.soul")}</span>
               )}
               {p.combo >= 2 && <span className="text-soul-gold font-bold">x{p.combo}</span>}
             </div>
@@ -101,10 +103,10 @@ export default function Hud(p: Props) {
           <div className="min-w-0 flex-1">
             <div className="mb-0.5 flex items-baseline justify-between gap-1.5">
               <span className="hidden text-[9px] font-bold tracking-widest text-white/50 uppercase sm:inline">
-                Chefão
+                {t("hud.boss_label")}
               </span>
               <span className="font-display ml-auto truncate text-sm leading-none tracking-wide text-soul-gold sm:text-xl">
-                SHACO
+                {t("hud.boss_name")}
               </span>
             </div>
             <div
@@ -124,7 +126,7 @@ export default function Hud(p: Props) {
               <div className="halftone-dark absolute inset-0" />
             </div>
             <div className="mt-0.5 text-right text-[9px] font-bold tracking-widest text-white/60 uppercase sm:text-xs">
-              {p.pairsFound}/{p.pairsTotal} pares
+              {t("hud.pairs_counter", { found: p.pairsFound, total: p.pairsTotal })}
             </div>
           </div>
         </div>
@@ -132,9 +134,9 @@ export default function Hud(p: Props) {
 
       {/* Stats bar */}
       <div className="mt-1.5 flex items-center justify-center gap-1.5 text-xs sm:mt-2.5 sm:gap-2.5 sm:text-sm">
-        <Stat label="Pontos" value={p.score.toLocaleString("pt-BR")} accent="text-soul-pink" />
-        <Stat label="Jogadas" value={String(p.moves)} />
-        <Stat label="Precisão" value={p.moves ? `${Math.round((p.pairsFound / p.moves) * 100)}%` : "—"} />
+        <Stat label={t("hud.points")} value={p.score.toLocaleString(resolvedLanguage)} accent="text-soul-pink" />
+        <Stat label={t("hud.moves")} value={String(p.moves)} />
+        <Stat label={t("hud.accuracy")} value={p.moves ? `${Math.round((p.pairsFound / p.moves) * 100)}%` : "—"} />
       </div>
     </div>
   );

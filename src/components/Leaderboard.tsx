@@ -9,6 +9,7 @@ import {
 } from "../lib/supabase";
 import { formatTime, RANK_STYLE } from "../lib/utils";
 import { PlayerAvatar, VerifiedBadge, VipBadge } from "./UserBadges";
+import { useI18n } from "../i18n";
 
 export type LeaderboardTab = "geral" | DifficultyId;
 
@@ -39,6 +40,7 @@ export default function Leaderboard({
   initial?: LeaderboardTab;
   highlightDate?: number;
 }) {
+  const { t, resolvedLanguage } = useI18n();
   const [tab, setTab] = useState<LeaderboardTab>(initial);
   const [loading, setLoading] = useState(true);
   const [onlineList, setOnlineList] = useState<LeaderItem[]>([]);
@@ -215,8 +217,8 @@ export default function Leaderboard({
           }`}
         >
           <span>👑</span>
-          <span>GERAL</span>
-          <span className="text-[10px] opacity-80">(Soma)</span>
+          <span>{t("leaderboard.general_tab")}</span>
+          <span className="text-[10px] opacity-80">{t("leaderboard.general_sub")}</span>
         </button>
 
         {DIFFICULTIES.map((d) => (
@@ -229,13 +231,13 @@ export default function Leaderboard({
                 : "bg-white/10 text-white/70 hover:bg-white/20"
             }`}
           >
-            <span>{d.label}</span>
+            <span>{t(`diff.${d.id}.label`)}</span>
             <span
               className={`text-[9.5px] px-1 py-0.2 rounded font-extrabold ${
                 tab === d.id ? "bg-black/20 text-soul-ink" : "text-soul-gold"
               }`}
             >
-              {d.scoreBadge}
+              {t("diff.pts_badge", { multiplier: d.scoreMultiplier.toFixed(1) })}
             </span>
           </button>
         ))}
@@ -245,30 +247,35 @@ export default function Leaderboard({
       <div className="mb-2 flex items-center justify-between px-1 text-[11px] text-white/50">
         {tab === "geral" ? (
           <span className="flex items-center gap-1">
-            <span className="text-soul-gold font-bold">✨ Ranking Geral:</span> Somatória das melhores pontuações de cada modo
+            <span className="text-soul-gold font-bold">{t("leaderboard.general_info_title")}</span> {t("leaderboard.general_info_desc")}
           </span>
         ) : (
           <span className="flex items-center gap-1">
-            <span className="text-soul-gold font-bold">{activeDiff?.label}:</span> Multiplicador {activeDiff?.scoreMultiplier}x · +{activeDiff?.pairBaseScore} pts por par
+            <span className="text-soul-gold font-bold">{t(`diff.${activeDiff?.id}.label`)}:</span>{" "}
+            {t("leaderboard.diff_info", {
+              label: t(`diff.${activeDiff?.id}.label`),
+              multiplier: activeDiff?.scoreMultiplier || 1,
+              base: activeDiff?.pairBaseScore || 100,
+            })}
           </span>
         )}
-        <span className="hidden sm:inline font-mono text-[10px]">Top guerreiros</span>
+        <span className="hidden sm:inline font-mono text-[10px]">{t("leaderboard.top_fighters")}</span>
       </div>
 
       {loading ? (
         <div className="flex flex-1 min-h-0 flex-col items-center justify-center rounded-2xl border border-white/10 bg-black/20 p-4">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-soul-pink border-t-transparent" />
           <span className="mt-2 text-xs font-bold tracking-wider text-white/50 uppercase">
-            Carregando ranking global...
+            {t("leaderboard.loading")}
           </span>
         </div>
       ) : onlineList.length === 0 ? (
         <div className="flex flex-1 min-h-0 flex-col items-center justify-center rounded-2xl border border-dashed border-white/20 p-6 text-center">
           <p className="text-sm font-semibold text-white/70">
-            Nenhuma luta registrada nesta categoria ainda!
+            {t("leaderboard.empty_title")}
           </p>
           <p className="mt-1 text-xs text-white/40">
-            Seja o primeiro guerreiro a cravar seu nome no ranking.
+            {t("leaderboard.empty_desc")}
           </p>
         </div>
       ) : (
@@ -346,21 +353,21 @@ export default function Leaderboard({
                 {e.isGeneral && (
                   <div className="flex items-center gap-1 mt-0.5 text-[10px] text-white/50 flex-wrap">
                     <span className="rounded bg-soul-gold/15 text-soul-gold px-1 font-bold">
-                      {e.modesPlayed}/4 modos
+                      {t("leaderboard.modes_count", { count: e.modesPlayed || 0 })}
                     </span>
                     <span className="hidden md:inline text-white/30">|</span>
                     <div className="hidden md:flex items-center gap-1.5 font-mono text-[9.5px]">
                       {Boolean(e.novatoScore) && (
-                        <span className="text-emerald-400">Nov: {e.novatoScore?.toLocaleString("pt-BR")}</span>
+                        <span className="text-emerald-400">{t("diff.novato.label").slice(0, 3)}: {e.novatoScore?.toLocaleString(resolvedLanguage)}</span>
                       )}
                       {Boolean(e.lutadorScore) && (
-                        <span className="text-amber-300">Lut: {e.lutadorScore?.toLocaleString("pt-BR")}</span>
+                        <span className="text-amber-300">{t("diff.lutador.label").slice(0, 3)}: {e.lutadorScore?.toLocaleString(resolvedLanguage)}</span>
                       )}
                       {Boolean(e.lendaScore) && (
-                        <span className="text-soul-pink">Len: {e.lendaScore?.toLocaleString("pt-BR")}</span>
+                        <span className="text-soul-pink">{t("diff.lenda.label").slice(0, 3)}: {e.lendaScore?.toLocaleString(resolvedLanguage)}</span>
                       )}
                       {Boolean(e.classicoScore) && (
-                        <span className="text-violet-300">Clá: {e.classicoScore?.toLocaleString("pt-BR")}</span>
+                        <span className="text-violet-300">{t("diff.classico.label").slice(0, 3)}: {e.classicoScore?.toLocaleString(resolvedLanguage)}</span>
                       )}
                     </div>
                   </div>
@@ -372,14 +379,14 @@ export default function Leaderboard({
                 {formatTime(e.timeMs)}
               </span>
               <span className="hidden text-xs text-white/40 sm:inline shrink-0">
-                {e.moves} jog.
+                {t("leaderboard.moves_suffix", { count: e.moves })}
               </span>
               <span className={`font-display text-lg tracking-wide shrink-0 font-bold ${
                 e.isGeneral
                   ? "bg-gradient-to-r from-soul-gold to-soul-pink bg-clip-text text-transparent"
                   : "text-soul-pink"
               }`}>
-                {e.score.toLocaleString("pt-BR")}
+                {e.score.toLocaleString(resolvedLanguage)}
               </span>
             </li>
           ))}
@@ -390,13 +397,13 @@ export default function Leaderboard({
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-2 text-[11px] text-white/40">
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1">
-            <VerifiedBadge className="h-3 w-3" /> Verificado ASTER
+            <VerifiedBadge className="h-3 w-3" /> {t("leaderboard.verified_aster")}
           </span>
           <span className="inline-flex items-center gap-1">
-            <VipBadge className="text-[9px] px-1 py-0" /> VIP
+            <VipBadge className="text-[9px] px-1 py-0" /> {t("leaderboard.vip_badge")}
           </span>
         </div>
-        <span>Top guerreiros da arena</span>
+        <span>{t("leaderboard.footer_legend")}</span>
       </div>
     </div>
   );

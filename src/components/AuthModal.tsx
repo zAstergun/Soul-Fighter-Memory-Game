@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { sfx } from "../lib/sound";
 import { VerifiedBadge, VipBadge } from "./UserBadges";
+import { useI18n } from "../i18n";
 
 type Props = {
   isOpen: boolean;
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
+  const { t } = useI18n();
   const { signIn, signUp } = useAuth();
   const [tab, setTab] = useState<"login" | "register">("login");
   const [loginIdentifier, setLoginIdentifier] = useState("");
@@ -34,7 +36,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
     try {
       if (tab === "login") {
         if (!loginIdentifier.trim() || !password) {
-          setError("Informe seu Nome de Lutador ou E-mail e sua senha.");
+          setError(t("auth.err_missing_login"));
           setSubmitting(false);
           return;
         }
@@ -49,31 +51,31 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
         }
       } else {
         if (!fighterName.trim()) {
-          setError("Informe seu Nome de Lutador.");
+          setError(t("auth.err_missing_name"));
           setSubmitting(false);
           return;
         }
 
         if (fighterName.trim().length < 3) {
-          setError("O Nome de Lutador deve ter pelo menos 3 caracteres.");
+          setError(t("auth.err_name_length"));
           setSubmitting(false);
           return;
         }
 
         if (!email.trim()) {
-          setError("Informe seu e-mail.");
+          setError(t("auth.err_missing_email"));
           setSubmitting(false);
           return;
         }
 
         if (password.length < 8) {
-          setError("A senha deve ter no mínimo 8 caracteres.");
+          setError(t("auth.err_password_length"));
           setSubmitting(false);
           return;
         }
 
         if (password !== confirmPassword) {
-          setError("As senhas não coincidem. Digite novamente.");
+          setError(t("auth.err_password_match"));
           setSubmitting(false);
           return;
         }
@@ -115,17 +117,36 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
         {/* Header */}
         <div className="text-center">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-soul-gold/40 bg-soul-gold/10 px-3 py-1 text-xs font-bold text-soul-gold tracking-wider uppercase mb-2">
-            <span>✨</span> Rede ASTER
+            <span>✨</span> {t("auth.badge")}
           </div>
           <h2 className="font-display text-3xl sm:text-4xl tracking-wide uppercase bg-gradient-to-r from-soul-gold via-white to-soul-cyan bg-clip-text text-transparent">
-            {tab === "login" ? "Entrar na Arena" : "Criar Aster Account"}
+            {tab === "login" ? t("auth.login_title") : t("auth.register_title")}
           </h2>
           <p className="mt-1 text-xs text-white/60 leading-relaxed">
-            Sua conta global para jogar, salvar recordes no ranking com selo de{" "}
-            <span className="text-soul-cyan font-bold inline-flex items-center gap-0.5">
-              <VerifiedBadge className="h-3 w-3 inline" /> Verificado
-            </span>{" "}
-            e <span className="text-soul-gold font-bold inline-flex items-center gap-0.5"><VipBadge className="text-[9px] py-0 px-1" /> VIP</span>!
+            {t("auth.header_desc", {
+              verified: "___VERIFIED___",
+              vip: "___VIP___",
+            })
+              .split("___VERIFIED___")
+              .map((part1, idx1) => (
+                <span key={idx1}>
+                  {idx1 > 0 && (
+                    <span className="text-soul-cyan font-bold inline-flex items-center gap-0.5 mx-0.5">
+                      <VerifiedBadge className="h-3 w-3 inline" /> {t("auth.verified")}
+                    </span>
+                  )}
+                  {part1.split("___VIP___").map((part2, idx2) => (
+                    <span key={idx2}>
+                      {idx2 > 0 && (
+                        <span className="text-soul-gold font-bold inline-flex items-center gap-0.5 mx-0.5">
+                          <VipBadge className="text-[9px] py-0 px-1" /> {t("auth.vip")}
+                        </span>
+                      )}
+                      {part2}
+                    </span>
+                  ))}
+                </span>
+              ))}
           </p>
         </div>
 
@@ -145,7 +166,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
                 : "text-white/60 hover:text-white"
             }`}
           >
-            Entrar
+            {t("auth.login_tab")}
           </button>
           <button
             type="button"
@@ -161,7 +182,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
                 : "text-white/60 hover:text-white"
             }`}
           >
-            Cadastrar
+            {t("auth.register_tab")}
           </button>
         </div>
 
@@ -183,13 +204,13 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
           {tab === "login" ? (
             <div>
               <label className="block text-[11px] font-bold tracking-wider text-white/60 uppercase mb-1">
-                Nome de Lutador ou E-mail
+                {t("auth.login_id_label")}
               </label>
               <input
                 type="text"
                 required
                 autoFocus
-                placeholder="Seu nome de lutador ou e-mail..."
+                placeholder={t("auth.login_id_placeholder")}
                 value={loginIdentifier}
                 onChange={(e) => setLoginIdentifier(e.target.value)}
                 className="w-full rounded-xl border border-white/15 bg-black/40 px-3.5 py-2.5 text-sm text-white placeholder-white/30 outline-none transition focus:border-soul-gold"
@@ -199,30 +220,30 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
             <>
               <div>
                 <label className="block text-[11px] font-bold tracking-wider text-white/60 uppercase mb-1">
-                  Nome de Lutador
+                  {t("auth.fighter_name_label")}
                 </label>
                 <input
                   type="text"
                   required
                   autoFocus
-                  placeholder="Ex: Gwen Master"
+                  placeholder={t("auth.fighter_name_placeholder")}
                   value={fighterName}
                   onChange={(e) => setFighterName(e.target.value.slice(0, 20))}
                   className="w-full rounded-xl border border-white/15 bg-black/40 px-3.5 py-2.5 text-sm text-white placeholder-white/30 outline-none transition focus:border-soul-gold"
                 />
                 <p className="mt-1 text-[10px] text-white/40 leading-snug">
-                  💡 Nomes com espaços requerem e-mail verificado.
+                  {t("auth.space_warning")}
                 </p>
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold tracking-wider text-white/60 uppercase mb-1">
-                  E-mail
+                  {t("auth.email_label")}
                 </label>
                 <input
                   type="email"
                   required
-                  placeholder="seu@email.com"
+                  placeholder={t("auth.email_placeholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full rounded-xl border border-white/15 bg-black/40 px-3.5 py-2.5 text-sm text-white placeholder-white/30 outline-none transition focus:border-soul-gold"
@@ -233,12 +254,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
 
           <div>
             <label className="block text-[11px] font-bold tracking-wider text-white/60 uppercase mb-1">
-              Senha
+              {t("auth.password_label")}
             </label>
             <input
               type="password"
               required
-              placeholder={tab === "register" ? "Mínimo 8 caracteres" : "Sua senha"}
+              placeholder={tab === "register" ? t("auth.password_reg_ph") : t("auth.password_login_ph")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-xl border border-white/15 bg-black/40 px-3.5 py-2.5 text-sm text-white placeholder-white/30 outline-none transition focus:border-soul-gold"
@@ -248,12 +269,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
           {tab === "register" && (
             <div>
               <label className="block text-[11px] font-bold tracking-wider text-white/60 uppercase mb-1">
-                Confirmar Senha
+                {t("auth.confirm_password_label")}
               </label>
               <input
                 type="password"
                 required
-                placeholder="Repita sua senha"
+                placeholder={t("auth.confirm_password_ph")}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full rounded-xl border border-white/15 bg-black/40 px-3.5 py-2.5 text-sm text-white placeholder-white/30 outline-none transition focus:border-soul-gold"
@@ -267,7 +288,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
             className="font-display group relative mt-2 w-full overflow-hidden rounded-xl bg-gradient-to-r from-soul-gold via-soul-orange to-soul-pink py-3 text-xl tracking-wider text-soul-ink shadow-lg transition hover:scale-[1.01] active:scale-95 disabled:opacity-50"
           >
             <span className="relative z-10 font-bold uppercase">
-              {submitting ? "Carregando..." : tab === "login" ? "Entrar com Aster Account" : "Criar Minha Conta"}
+              {submitting ? t("auth.loading") : tab === "login" ? t("auth.login_btn") : t("auth.register_btn")}
             </span>
           </button>
         </form>
@@ -282,7 +303,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: Props) {
             }}
             className="text-xs text-white/60 hover:text-white underline underline-offset-4"
           >
-            Ou continue sem conta (apenas como convidado)
+            {t("auth.guest_continue")}
           </button>
         </div>
       </div>

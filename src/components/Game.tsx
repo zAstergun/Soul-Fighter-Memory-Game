@@ -8,6 +8,8 @@ import { getRank, shuffle } from "../lib/utils";
 import Card from "./Card";
 import Hud from "./Hud";
 import ResultModal, { type Result } from "./ResultModal";
+import LanguageSelector from "./LanguageSelector";
+import { useI18n } from "../i18n";
 
 type Phase = "intro" | "preview" | "fight" | "playing" | "over";
 type Popup = { id: number; text: string; color: string; big?: boolean };
@@ -43,6 +45,7 @@ const buildDeck = (diffId: DifficultyId): Fighter[] => {
 };
 
 export default function Game({ playerName, difficulty, onRestart, onExit }: Props) {
+  const { t } = useI18n();
   const { user } = useAuth();
   const diff = getDifficulty(difficulty);
   const [deck] = useState(() => buildDeck(difficulty));
@@ -227,7 +230,7 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
         later(() => sfx.hit(), 120);
         if (s.combo >= 2) {
           later(() => sfx.combo(), 200);
-          popup(`COMBO x${s.combo}!`, "#ffd23f", true);
+          popup(t("phases.combo_popup", { combo: s.combo }), "#ffd23f", true);
         } else {
           popup(deck[a].name.toUpperCase() + "!", deck[a].color, true);
         }
@@ -327,16 +330,17 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
             onClick={onExit}
             className="rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-bold tracking-wide text-white/70 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white sm:px-3 sm:py-1.5 sm:text-xs"
           >
-            ← Menu
+            {t("hud.menu_btn")}
           </button>
-          <div className="flex gap-1 sm:gap-1.5">
-            <IconBtn onClick={toggleMute} label={muted ? "Ativar som (M)" : "Silenciar (M)"}>
+          <div className="flex items-center gap-1 sm:gap-1.5">
+            <LanguageSelector compact />
+            <IconBtn onClick={toggleMute} label={muted ? t("hud.sound_unmute") : t("hud.sound_mute")}>
               {muted ? "🔇" : "🔊"}
             </IconBtn>
-            <IconBtn onClick={onRestart} label="Reiniciar (R)">
+            <IconBtn onClick={onRestart} label={t("hud.restart_btn")}>
               ↻
             </IconBtn>
-            <IconBtn onClick={togglePause} label="Pausar (P)" disabled={phase !== "playing"}>
+            <IconBtn onClick={togglePause} label={t("hud.pause_btn")} disabled={phase !== "playing"}>
               {paused ? "▶" : "❚❚"}
             </IconBtn>
           </div>
@@ -354,7 +358,7 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
           moves={moves}
           pairsFound={matched.size / 2}
           pairsTotal={totalMatches}
-          difficultyLabel={diff.label}
+          difficultyLabel={t(`diff.${diff.id}.label`)}
         />
       </div>
 
@@ -396,18 +400,18 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
         {(phase === "intro" || phase === "fight" || phase === "preview") && (
           <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
             {phase === "intro" && (
-              <BigText key="r1" color="#ffffff" sub={diff.label.toUpperCase()}>
-                ROUND 1
+              <BigText key="r1" color="#ffffff" sub={t(`diff.${diff.id}.label`).toUpperCase()}>
+                {t("phases.round_1")}
               </BigText>
             )}
             {phase === "preview" && (
               <span className="animate-slam font-display rounded-xl bg-black/70 px-6 py-2 text-3xl tracking-[0.2em] text-soul-cyan sm:text-5xl">
-                MEMORIZE!
+                {t("phases.memorize")}
               </span>
             )}
             {phase === "fight" && (
               <BigText key="fight" color="#ffd23f">
-                FIGHT!
+                {t("phases.fight")}
               </BigText>
             )}
           </div>
@@ -415,16 +419,16 @@ export default function Game({ playerName, difficulty, onRestart, onExit }: Prop
 
         {paused && (
           <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-5 rounded-3xl bg-soul-ink/85 backdrop-blur-xl">
-            <span className="font-display text-7xl tracking-widest text-white [text-shadow:5px_5px_0_#ff3d9a]">PAUSA</span>
+            <span className="font-display text-7xl tracking-widest text-white [text-shadow:5px_5px_0_#ff3d9a]">{t("phases.pause_title")}</span>
             <div className="flex gap-3">
               <button onClick={onExit} className="rounded-2xl border-2 border-white/20 px-6 py-3 font-bold text-white/80 hover:bg-white/10">
-                Sair
+                {t("phases.exit_btn")}
               </button>
               <button
                 onClick={togglePause}
                 className="font-display rounded-2xl bg-gradient-to-r from-soul-pink to-soul-violet px-8 py-3 text-2xl tracking-widest"
               >
-                CONTINUAR
+                {t("phases.resume_btn")}
               </button>
             </div>
           </div>

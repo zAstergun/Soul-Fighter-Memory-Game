@@ -7,6 +7,7 @@ import type { DifficultyId } from "./data/fighters";
 import { getPlayerName, setPlayerName } from "./lib/storage";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { startPresenceHeartbeat, sendPresencePing } from "./lib/presence";
+import { I18nProvider } from "./i18n";
 
 type Screen = { name: "menu" } | { name: "game"; player: string; diff: DifficultyId; key: number };
 
@@ -65,9 +66,11 @@ function MainContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <MainContent />
-    </AuthProvider>
+    <I18nProvider>
+      <AuthProvider>
+        <MainContent />
+      </AuthProvider>
+    </I18nProvider>
   );
 }
 

@@ -3,8 +3,10 @@ import { BASE_FIGHTERS, DIFFICULTIES, loadingArt, type DifficultyId } from "../d
 import { getPlayerName, setPlayerName } from "../lib/storage";
 import { sfx } from "../lib/sound";
 import { useAuth } from "../context/AuthContext";
+import { useI18n } from "../i18n";
 import AuthModal from "./AuthModal";
 import Leaderboard from "./Leaderboard";
+import LanguageSelector from "./LanguageSelector";
 import { PlayerAvatar, VerifiedBadge, VipBadge } from "./UserBadges";
 
 type Props = {
@@ -13,6 +15,7 @@ type Props = {
 };
 
 export default function StartScreen({ onStart, initialDiff }: Props) {
+  const { t } = useI18n();
   const { user, profile, signOut, loading: authLoading } = useAuth();
   const [name, setName] = useState(getPlayerName());
   const [diff, setDiff] = useState<DifficultyId>(initialDiff);
@@ -51,49 +54,54 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
         }}
       />
 
-      {/* Top Bar / Status da Conta */}
+      {/* Top Bar / Status da Conta & Language Selector */}
       <div className="flex w-full max-w-3xl md:max-w-4xl shrink-0 items-center justify-between gap-2 px-1 text-xs">
         <div className="flex items-center gap-1.5 sm:gap-2">
           <span className="font-display text-xs sm:text-sm tracking-wider text-soul-gold">
-            REDE ASTER
+            {t("nav.aster_network")}
           </span>
           <span className="h-1 w-1 rounded-full bg-white/40" />
-          <span className="text-[10px] text-white/60 sm:text-xs">Soul Fighter Arena</span>
+          <span className="text-[10px] text-white/60 sm:text-xs">{t("nav.arena_subtitle")}</span>
         </div>
 
-        {user && profile ? (
-          <div className="flex items-center gap-1.5 rounded-full border border-soul-gold/30 bg-black/50 py-0.5 pl-1 pr-2 backdrop-blur-sm sm:py-1 sm:pl-1.5 sm:pr-2.5">
-            <PlayerAvatar profile={profile} name={profile.full_name || "Guerreiro"} size="sm" />
-            <div className="flex items-center gap-1">
-              <span className="max-w-[90px] truncate text-[11px] font-bold text-white sm:max-w-[140px] sm:text-xs">
-                {profile.full_name || profile.channel}
-              </span>
-              <VerifiedBadge className="h-3 w-3" />
-              {profile.is_vip && <VipBadge className="text-[9px] px-1 py-0" />}
+        <div className="flex items-center gap-2">
+          <LanguageSelector compact />
+
+          {user && profile ? (
+            <div className="flex items-center gap-1.5 rounded-full border border-soul-gold/30 bg-black/50 py-0.5 pl-1 pr-2 backdrop-blur-sm sm:py-1 sm:pl-1.5 sm:pr-2.5">
+              <PlayerAvatar profile={profile} name={profile.full_name || "Guerreiro"} size="sm" />
+              <div className="flex items-center gap-1">
+                <span className="max-w-[80px] truncate text-[11px] font-bold text-white sm:max-w-[130px] sm:text-xs">
+                  {profile.full_name || profile.channel}
+                </span>
+                <VerifiedBadge className="h-3 w-3" />
+                {profile.is_vip && <VipBadge className="text-[9px] px-1 py-0" />}
+              </div>
+              <button
+                onClick={() => {
+                  sfx.click();
+                  signOut();
+                }}
+                title={t("nav.logout_title")}
+                className="ml-1 text-[10px] text-white/40 transition hover:text-soul-pink"
+              >
+                {t("nav.logout")}
+              </button>
             </div>
+          ) : (
             <button
               onClick={() => {
                 sfx.click();
-                signOut();
+                setAuthModalOpen(true);
               }}
-              title="Sair da Aster Account"
-              className="ml-1 text-[10px] text-white/40 transition hover:text-soul-pink"
+              className="flex items-center gap-1 rounded-full border border-soul-cyan/40 bg-soul-cyan/10 px-2.5 py-0.5 text-[11px] font-bold text-soul-cyan transition hover:bg-soul-cyan/20 active:scale-95 sm:px-3 sm:py-1 sm:text-xs"
             >
-              (Sair)
+              <VerifiedBadge className="h-3 w-3" />
+              <span className="hidden min-[380px]:inline">{t("nav.login_aster")}</span>
+              <span className="min-[380px]:hidden">Aster</span>
             </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => {
-              sfx.click();
-              setAuthModalOpen(true);
-            }}
-            className="flex items-center gap-1 rounded-full border border-soul-cyan/40 bg-soul-cyan/10 px-2.5 py-0.5 text-[11px] font-bold text-soul-cyan transition hover:bg-soul-cyan/20 active:scale-95 sm:px-3 sm:py-1 sm:text-xs"
-          >
-            <VerifiedBadge className="h-3 w-3" />
-            <span>Entrar com Aster Account</span>
-          </button>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Logo */}
@@ -108,10 +116,10 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
         </div>
         <div className="mt-1 flex items-center justify-center gap-1.5 sm:mt-1.5 sm:gap-2">
           <span className="clip-slant bg-soul-pink px-2.5 py-0.5 font-display text-xs tracking-widest text-white sm:px-4 sm:py-1 sm:text-lg">
-            MEMORY GAME
+            {t("header.memory_game")}
           </span>
           <span className="clip-slant-r bg-soul-gold px-2 py-0.5 font-display text-[11px] tracking-widest text-soul-ink sm:px-3 sm:py-1 sm:text-base">
-            REMASTERED
+            {t("header.remastered")}
           </span>
         </div>
       </header>
@@ -170,9 +178,9 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
         <div className="mb-2 grid grid-cols-3 gap-1 shrink-0 rounded-full bg-black/40 p-1 sm:mb-2.5">
           {(
             [
-              ["play", "Jogar"],
-              ["rank", "Ranking Global"],
-              ["help", "Como jogar"],
+              ["play", t("tabs.play")],
+              ["rank", t("tabs.rank")],
+              ["help", t("tabs.help")],
             ] as const
           ).map(([id, label]) => (
             <button
@@ -204,7 +212,7 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                     {/* Seletor de Modo: Convidado vs Aster Account */}
                     <div className="rounded-xl border border-white/10 bg-black/40 p-1.5 sm:p-2.5">
                       <span className="mb-1 block text-[10px] font-bold tracking-wider text-white/50 uppercase sm:text-[11px]">
-                        Identidade na Arena
+                        {t("identity.title")}
                       </span>
                       <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                         <button
@@ -220,10 +228,10 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                           }`}
                         >
                           <div className="flex items-center gap-1 font-bold text-[11px] sm:text-xs uppercase">
-                            <span>👤</span> Convidado
+                            <span>👤</span> {t("identity.guest")}
                           </div>
                           <span className="mt-0.5 text-[9px] sm:text-[10px] text-white/50 leading-tight">
-                            Nome livre. Sem foto.
+                            {t("identity.guest_desc")}
                           </span>
                         </button>
 
@@ -244,11 +252,11 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                           }`}
                         >
                           <div className="flex items-center gap-1 font-bold text-[11px] sm:text-xs uppercase text-soul-cyan">
-                            <span>✨</span> Aster Account
+                            <span>✨</span> {t("identity.account")}
                             <VerifiedBadge className="h-3 w-3" />
                           </div>
                           <span className="mt-0.5 text-[9px] sm:text-[10px] text-white/50 leading-tight">
-                            {user && profile ? "VIP & Verificado!" : "Entrar / cadastrar"}
+                            {user && profile ? t("identity.account_desc_logged") : t("identity.account_desc_guest")}
                           </span>
                         </button>
                       </div>
@@ -274,13 +282,13 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                             }}
                             className="text-[10px] font-bold text-soul-pink hover:underline shrink-0 ml-1"
                           >
-                            Trocar
+                            {t("identity.switch_account")}
                           </button>
                         </div>
                       ) : (
                         <div className="mt-1.5 flex items-center gap-1 rounded-lg bg-white/5 border border-white/5 px-2 py-0.5 text-[9.5px] sm:text-[10px] text-white/50">
                           <span className="text-soul-gold text-xs">💡</span>
-                          <span>Entre com Aster Account para selos e ranking global.</span>
+                          <span>{t("identity.account_hint")}</span>
                         </div>
                       )}
                     </div>
@@ -288,12 +296,12 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                     {/* Input do Nome do Lutador */}
                     <label className="block">
                       <span className="mb-0.5 block text-[10px] font-bold tracking-widest text-white/60 uppercase sm:text-xs">
-                        Nome do lutador
+                        {t("identity.fighter_name_label")}
                       </span>
                       <input
                         value={name}
                         onChange={(e) => setName(e.target.value.slice(0, 16))}
-                        placeholder="Digite seu nome..."
+                        placeholder={t("identity.fighter_name_placeholder")}
                         className="w-full rounded-xl border border-white/15 bg-black/40 px-3 py-1.5 text-sm font-semibold text-white placeholder-white/30 outline-none transition focus:border-soul-gold sm:py-2 sm:text-base"
                       />
                     </label>
@@ -302,7 +310,7 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                   {/* LADO DIREITO: Dificuldades */}
                   <div className="flex flex-col justify-between">
                     <span className="mb-0.5 block text-[10px] font-bold tracking-widest text-white/60 uppercase sm:text-xs">
-                      Dificuldade da Luta
+                      {t("diff.title")}
                     </span>
                     <div className="flex flex-col gap-1 sm:gap-1.5 flex-1 justify-between">
                       {DIFFICULTIES.map((d) => (
@@ -322,16 +330,16 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                           <div className={`absolute inset-y-0 left-0 w-1 sm:w-1.5 bg-gradient-to-b ${d.accent}`} />
                           <div className="pl-1 min-w-0 flex-1">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="font-display text-sm tracking-wide sm:text-base">{d.label}</span>
+                              <span className="font-display text-sm tracking-wide sm:text-base">{t(`diff.${d.id}.label`)}</span>
                               <span className="text-[9px] font-bold tracking-wide text-soul-gold uppercase sm:text-[10px]">
-                                {d.tag}
+                                {t(`diff.${d.id}.tag`)}
                               </span>
                               <span className="rounded bg-soul-pink/20 px-1 py-0.2 text-[8.5px] font-bold text-soul-pink border border-soul-pink/30 sm:text-[9.5px]">
-                                {d.scoreBadge}
+                                {t("diff.pts_badge", { multiplier: d.scoreMultiplier.toFixed(1) })}
                               </span>
                             </div>
                             <p className="text-[9.5px] sm:text-[10px] leading-tight text-white/60 truncate">
-                              {d.description}
+                              {t(`diff.${d.id}.desc`)}
                             </p>
                           </div>
                           <div className="ml-1.5 flex shrink-0 items-center">
@@ -356,7 +364,7 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                 disabled={!valid}
                 className="shrink-0 font-display group relative mt-1 w-full overflow-hidden rounded-xl bg-gradient-to-r from-soul-orange via-soul-pink to-soul-violet py-2 text-xl sm:py-2.5 sm:text-2xl tracking-widest text-white shadow-lg transition enabled:hover:scale-[1.01] enabled:active:scale-95 disabled:cursor-not-allowed disabled:from-zinc-600 disabled:via-zinc-600 disabled:to-zinc-700 disabled:text-white/40"
               >
-                <span className="relative z-10">{valid ? "LUTAR!" : "DIGITE SEU NOME"}</span>
+                <span className="relative z-10">{valid ? t("play_btn.ready") : t("play_btn.need_name")}</span>
                 {valid && (
                   <span className="absolute inset-y-0 left-0 w-1/3 bg-white/30 opacity-0 blur-md group-hover:animate-shine group-hover:opacity-100" />
                 )}
@@ -373,11 +381,11 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                 <div className="flex items-center gap-1.5">
                   <span className="text-base sm:text-lg">📜</span>
                   <span className="font-display tracking-wider text-xs sm:text-sm text-soul-gold uppercase font-bold">
-                    Regras & Sistema de Combate
+                    {t("guide.title")}
                   </span>
                 </div>
                 <span className="text-[10px] sm:text-[11px] text-white/40 font-mono">
-                  Arena v2.0
+                  {t("guide.version")}
                 </span>
               </div>
 
@@ -391,15 +399,15 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                     </span>
                     <div>
                       <h4 className="font-display text-xs tracking-wide text-white font-bold">
-                        Duelo de Memória
+                        {t("guide.card1_title")}
                       </h4>
                       <span className="text-[9.5px] text-soul-cyan uppercase font-bold tracking-wider">
-                        Pares & Chefão Shaco
+                        {t("guide.card1_tag")}
                       </span>
                     </div>
                   </div>
                   <p className="text-[11px] leading-relaxed text-white/70">
-                    Vire 2 cartas por vez. Encontrar o mesmo campeão desfere um golpe direto no <strong className="text-white">Shaco</strong>, esvaziando a barra de vida dele até o K.O.!
+                    {t("guide.card1_desc")}
                   </p>
                 </div>
 
@@ -411,15 +419,15 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                     </span>
                     <div>
                       <h4 className="font-display text-xs tracking-wide text-white font-bold">
-                        Sequência Implacável
+                        {t("guide.card2_title")}
                       </h4>
                       <span className="text-[9.5px] text-soul-gold uppercase font-bold tracking-wider">
-                        Combos de Acerto
+                        {t("guide.card2_tag")}
                       </span>
                     </div>
                   </div>
                   <p className="text-[11px] leading-relaxed text-white/70">
-                    Acertos contínuos ativam <strong className="text-soul-gold">Combos (x2, x3...)</strong>. Quanto maior a sequência sem errar, mais pontos você ganha a cada par virado.
+                    {t("guide.card2_desc")}
                   </p>
                 </div>
 
@@ -431,25 +439,25 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                     </span>
                     <div>
                       <h4 className="font-display text-xs tracking-wide text-white font-bold">
-                        Multiplicadores
+                        {t("guide.card3_title")}
                       </h4>
                       <span className="text-[9.5px] text-soul-pink uppercase font-bold tracking-wider">
-                        Dificuldades & Desafio
+                        {t("guide.card3_tag")}
                       </span>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-1 text-[10px] mt-0.5">
                     <span className="rounded bg-black/40 px-1.5 py-0.5 text-emerald-300 border border-emerald-500/20">
-                      Novato: <strong>1.0x PTS</strong>
+                      {t("diff.novato.label")}: <strong>1.0x PTS</strong>
                     </span>
                     <span className="rounded bg-black/40 px-1.5 py-0.5 text-soul-gold border border-soul-gold/20">
-                      Lutador: <strong>1.5x PTS</strong>
+                      {t("diff.lutador.label")}: <strong>1.5x PTS</strong>
                     </span>
                     <span className="rounded bg-black/40 px-1.5 py-0.5 text-violet-300 border border-violet-500/20">
-                      Clássico: <strong>2.0x PTS</strong>
+                      {t("diff.classico.label")}: <strong>2.0x PTS</strong>
                     </span>
                     <span className="rounded bg-black/40 px-1.5 py-0.5 text-soul-pink border border-soul-pink/30 font-bold">
-                      Lenda: <strong>3.0x PTS</strong>
+                      {t("diff.lenda.label")}: <strong>3.0x PTS</strong>
                     </span>
                   </div>
                 </div>
@@ -462,15 +470,15 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
                     </span>
                     <div>
                       <h4 className="font-display text-xs tracking-wide text-white font-bold">
-                        Ranking Geral
+                        {t("guide.card4_title")}
                       </h4>
                       <span className="text-[9.5px] text-soul-gold uppercase font-bold tracking-wider">
-                        Somatória & Recorde Único
+                        {t("guide.card4_tag")}
                       </span>
                     </div>
                   </div>
                   <p className="text-[11px] leading-relaxed text-white/70">
-                    Sua melhor pontuação de cada modo é somada no <strong className="text-white">Ranking Geral</strong>. Cada conta só ocupa <strong className="text-soul-gold">1 lugar</strong> por modo: bater seu recorde substitui a marca anterior!
+                    {t("guide.card4_desc")}
                   </p>
                 </div>
               </div>
@@ -478,17 +486,17 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
               {/* Barra de Atalhos de Teclado no Rodapé */}
               <div className="shrink-0 rounded-xl border border-white/10 bg-black/40 px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-white/70">
                 <span className="font-bold text-white flex items-center gap-1.5">
-                  <span>⌨️</span> Atalhos Rápidos:
+                  <span>⌨️</span> {t("guide.shortcuts_title")}
                 </span>
                 <div className="flex items-center gap-3 font-mono text-[10.5px]">
                   <span className="inline-flex items-center gap-1">
-                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-gold font-bold shadow">P</kbd> Pausar
+                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-gold font-bold shadow">P</kbd> {t("guide.shortcut_pause")}
                   </span>
                   <span className="inline-flex items-center gap-1">
-                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-cyan font-bold shadow">M</kbd> Áudio
+                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-cyan font-bold shadow">M</kbd> {t("guide.shortcut_audio")}
                   </span>
                   <span className="inline-flex items-center gap-1">
-                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-pink font-bold shadow">R</kbd> Reiniciar
+                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-soul-pink font-bold shadow">R</kbd> {t("guide.shortcut_restart")}
                   </span>
                 </div>
               </div>
@@ -499,16 +507,23 @@ export default function StartScreen({ onStart, initialDiff }: Props) {
 
       {/* Footer */}
       <footer className="shrink-0 pt-1 text-center text-[10px] text-white/40 sm:pt-2 sm:text-xs">
-        Feito com tédio pelo{" "}
-        <a
-          href="https://github.com/zAstergun"
-          target="_blank"
-          rel="noreferrer"
-          className="font-bold text-soul-gold hover:underline"
-        >
-          Aster
-        </a>{" "}
-        · agora remasterizado ✨
+        {t("footer.made_by", { author: "Aster" })
+          .split("Aster")
+          .map((part, i, arr) => (
+            <span key={i}>
+              {part}
+              {i < arr.length - 1 && (
+                <a
+                  href="https://github.com/zAstergun"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-bold text-soul-gold hover:underline"
+                >
+                  Aster
+                </a>
+              )}
+            </span>
+          ))}
       </footer>
     </div>
   );

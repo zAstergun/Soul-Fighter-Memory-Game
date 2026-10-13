@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { loadingArt, type Fighter } from "../data/fighters";
+import { useI18n } from "../i18n";
 
 type Props = {
   fighter: Fighter;
@@ -42,12 +43,13 @@ function CardBack() {
 }
 
 function Card({ fighter, index, revealed, matched, wrong, justMatched, onClick }: Props) {
+  const { t } = useI18n();
   const flipped = revealed || matched;
   return (
     <button
       type="button"
       onClick={() => onClick(index)}
-      aria-label={flipped ? fighter.name : `Carta ${index + 1}, virada para baixo`}
+      aria-label={flipped ? fighter.name : t("card.face_down", { index: index + 1 })}
       disabled={matched}
       className="animate-deal group relative aspect-[3/4] w-full cursor-pointer rounded-xl outline-none focus-visible:ring-4 focus-visible:ring-soul-cyan disabled:cursor-default"
       style={{ animationDelay: `${index * 35}ms` }}
@@ -80,7 +82,9 @@ function Card({ fighter, index, revealed, matched, wrong, justMatched, onClick }
             className="h-full w-full object-cover object-[50%_15%]"
           />
           {fighter.prestige && (
-            <span className="absolute top-1 right-1 rounded bg-soul-gold px-1 text-[9px] font-black tracking-wider text-soul-ink">PRESTÍGIO</span>
+            <span className="absolute top-1 right-1 rounded bg-soul-gold px-1 text-[9px] font-black tracking-wider text-soul-ink">
+              {t("card.prestige")}
+            </span>
           )}
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-1.5 pt-5 pb-1">
             <p className="font-display truncate text-center text-[clamp(0.7rem,2vw,1.05rem)] leading-none tracking-wide" style={{ color: fighter.color }}>
