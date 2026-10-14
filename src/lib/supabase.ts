@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type User } from "@supabase/supabase-js";
 import type { DifficultyId } from "../data/fighters";
 
 export const SUPABASE_URL = "https://yofvcyarznuvqntgslep.supabase.co";
@@ -10,6 +10,7 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
+    storage: typeof window !== "undefined" ? window.localStorage : undefined,
   },
 });
 
@@ -34,15 +35,33 @@ export type SupabaseLeaderboardEntry = {
   profiles?: UserProfile | null;
 };
 
-export async function fetchProfile(userId: string): Promise<UserProfile | null> {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("id, full_name, channel, avatar_url, is_vip")
-    .eq("id", userId)
-    .maybeSingle();
+export function createProfileFromUser(user: User): UserProfile {
+  const meta = user.user_metadata || {};
+  const cleanName = meta.full_name || meta.user_name || user.email?.split("@")[0] || "Lutador";
+  const channel = meta.channel || (meta.user_name ? `@${meta.user_name}` : null);
+  return {
+    id: user.id,
+    full_name: cleanName,
+    channel,
+    avatar_url: meta.avatar_url || null,
+    is_vip: Boolean(meta.is_vip),
+  };
+}
 
-  if (error || !data) return null;
-  return data as UserProfile;
+export async function fetchProfile(userId: string): Promise<UserProfile | null> {
+  try {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, full_name, channel, avatar_url, is_vip")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (error || !data) return null;
+    return data as UserProfile;
+  } catch (err) {
+    console.warn("Erro ao buscar perfil remoto:", err);
+    return null;
+  }
 }
 
 export async function fetchLeaderboardFromDb(

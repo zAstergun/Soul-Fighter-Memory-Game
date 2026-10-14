@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { User } from "@supabase/supabase-js";
-import { supabase, fetchProfile, type UserProfile } from "../lib/supabase";
+import { supabase, fetchProfile, createProfileFromUser, type UserProfile } from "../lib/supabase";
 
 type AuthContextType = {
   user: User | null;
@@ -12,50 +12,111 @@ type AuthContextType = {
   refreshProfile: () => Promise<void>;
 };
 
+const CACHE_USER_KEY = "sf_cached_user";
+const CACHE_PROFILE_KEY = "sf_cached_profile";
+
+function getCachedProfile(): UserProfile | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(CACHE_PROFILE_KEY);
+    return raw ? (JSON.parse(raw) as UserProfile) : null;
+  } catch {
+    return null;
+  }
+}
+
+function getCachedUser(): User | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(CACHE_USER_KEY);
+    return raw ? (JSON.parse(raw) as User) : null;
+  } catch {
+    return null;
+  }
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(() => getCachedUser());
+  const [profile, setProfile] = useState<UserProfile | null>(() => getCachedProfile());
+  const [loading, setLoading] = useState<boolean>(() => !getCachedUser());
 
-  const loadProfile = async (uid: string) => {
-    const p = await fetchProfile(uid);
-    setProfile(p);
+  const loadProfile = async (targetUser: User): Promise<UserProfile> => {
+    try {
+      const p = await fetchProfile(targetUser.id);
+      if (p) {
+        setProfile(p);
+        localStorage.setItem(CACHE_PROFILE_KEY, JSON.stringify(p));
+        return p;
+      }
+    } catch (err) {
+      console.warn("Erro ao buscar perfil remoto:", err);
+    }
+
+    // Fallback: se o perfil não existe na tabela profiles (ou falha de rede),
+    // cria a partir dos metadados da conta para que NUNCA fique nulo
+    const fallback = createProfileFromUser(targetUser);
+    setProfile(fallback);
+    localStorage.setItem(CACHE_PROFILE_KEY, JSON.stringify(fallback));
+    return fallback;
   };
 
   useEffect(() => {
+    let isMounted = true;
+
+    // Sincroniza sessão persistida pelo Supabase
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
       const u = session?.user ?? null;
-      setUser(u);
       if (u) {
-        loadProfile(u.id).finally(() => setLoading(false));
+        setUser(u);
+        localStorage.setItem(CACHE_USER_KEY, JSON.stringify(u));
+        loadProfile(u).finally(() => {
+          if (isMounted) setLoading(false);
+        });
       } else {
-        setLoading(false);
+        // Se realmente não há sessão confirmada pelo Supabase, limpa
+        setUser(null);
+        setProfile(null);
+        localStorage.removeItem(CACHE_PROFILE_KEY);
+        localStorage.removeItem(CACHE_USER_KEY);
+        if (isMounted) setLoading(false);
       }
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!isMounted) return;
       const u = session?.user ?? null;
-      setUser(u);
-      if (u) {
-        await loadProfile(u.id);
-      } else {
+
+      if (event === "SIGNED_OUT") {
+        setUser(null);
         setProfile(null);
+        localStorage.removeItem(CACHE_PROFILE_KEY);
+        localStorage.removeItem(CACHE_USER_KEY);
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      if (u) {
+        setUser(u);
+        localStorage.setItem(CACHE_USER_KEY, JSON.stringify(u));
+        await loadProfile(u);
+        if (isMounted) setLoading(false);
+      }
     });
 
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
     };
   }, []);
 
   const refreshProfile = async () => {
     if (user) {
-      await loadProfile(user.id);
+      await loadProfile(user);
     }
   };
 
@@ -77,28 +138,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         targetEmail = resolvedEmail;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
+      let { data, error } = await supabase.auth.signInWithPassword({
         email: targetEmail,
         password: pass,
       });
 
-      if (error) {
-        // Se falhou e o usuário digitou algo com @ que não era email direto (ex: @aster)
-        if (clean.startsWith("@")) {
-          const { data: resolvedEmail } = await supabase.rpc(
-            "get_email_by_identifier",
-            { p_identifier: clean }
-          );
-          if (resolvedEmail && resolvedEmail !== targetEmail) {
-            const retry = await supabase.auth.signInWithPassword({
-              email: resolvedEmail,
-              password: pass,
-            });
-            if (!retry.error) return {};
-          }
+      if (error && clean.startsWith("@")) {
+        const { data: resolvedEmail } = await supabase.rpc(
+          "get_email_by_identifier",
+          { p_identifier: clean }
+        );
+        if (resolvedEmail && resolvedEmail !== targetEmail) {
+          const retry = await supabase.auth.signInWithPassword({
+            email: resolvedEmail,
+            password: pass,
+          });
+          data = retry.data;
+          error = retry.error;
         }
+      }
+
+      if (error) {
         return { error: "Credenciais inválidas. Verifique seu nome/e-mail e senha." };
       }
+
+      if (data?.user) {
+        setUser(data.user);
+        localStorage.setItem(CACHE_USER_KEY, JSON.stringify(data.user));
+        await loadProfile(data.user);
+      }
+
       return {};
     } catch (e: unknown) {
       const err = e as Error;
@@ -126,11 +195,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) return { error: error.message };
 
-      if (data.user && !data.session) {
-        return {
-          message:
-            "Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro (se a confirmação estiver ativada).",
-        };
+      if (data.user) {
+        if (data.session) {
+          setUser(data.user);
+          localStorage.setItem(CACHE_USER_KEY, JSON.stringify(data.user));
+          await loadProfile(data.user);
+        } else {
+          return {
+            message:
+              "Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro (se a confirmação estiver ativada).",
+          };
+        }
       }
 
       return {};
@@ -141,9 +216,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    localStorage.removeItem(CACHE_PROFILE_KEY);
+    localStorage.removeItem(CACHE_USER_KEY);
     setUser(null);
     setProfile(null);
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.warn("Erro ao fazer signOut:", err);
+    }
   };
 
   return (

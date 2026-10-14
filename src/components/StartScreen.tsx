@@ -17,11 +17,24 @@ type Props = {
 export default function StartScreen({ onStart, initialDiff }: Props) {
   const { t } = useI18n();
   const { user, profile, signOut, loading: authLoading } = useAuth();
-  const [name, setName] = useState(getPlayerName());
+  const [name, setName] = useState(() => {
+    try {
+      const cachedProf = localStorage.getItem("sf_cached_profile");
+      if (cachedProf) {
+        const parsed = JSON.parse(cachedProf);
+        const n = parsed.full_name || parsed.channel?.replace("@", "");
+        if (n) return n;
+      }
+    } catch {}
+    return getPlayerName();
+  });
   const [diff, setDiff] = useState<DifficultyId>(initialDiff);
   const [panel, setPanel] = useState<"play" | "rank" | "help">("play");
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [mode, setMode] = useState<"guest" | "account">("guest");
+  const [mode, setMode] = useState<"guest" | "account">(() => {
+    const cachedUser = typeof window !== "undefined" && localStorage.getItem("sf_cached_user");
+    return cachedUser ? "account" : "guest";
+  });
 
   // Quando o usuário loga ou o perfil carrega, atualiza o nome e o modo
   useEffect(() => {
